@@ -266,6 +266,7 @@ void ModularBackend::deleteMutex(MutexRef mutex) {
 }
 
 Audio::Mixer *ModularBackend::getMixer() {
+	printf("unlucky mixer queried\n");
 	assert(_mixer);
 	return (Audio::Mixer *)_mixer;
 }

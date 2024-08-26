@@ -204,7 +204,7 @@ int MidiDriver_MT32::open() {
 	if (_service.openSynth() != MT32EMU_RC_OK)
 		return MERR_DEVICE_NOT_AVAILABLE;
 
-	double gain = (double)ConfMan.getInt("midi_gain") / 100.0;
+	float gain = (float)ConfMan.getInt("midi_gain") / 100.0;
 	_service.setOutputGain(1.0f * gain);
 	_service.setReverbOutputGain(1.0f * gain);
 	// We let the synthesizer play MIDI messages immediately. Our MIDI

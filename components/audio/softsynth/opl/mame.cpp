@@ -157,7 +157,7 @@ static const int slot_array[32] = {
 
 static uint KSL_TABLE[8 * 16];
 
-static const double KSL_TABLE_SEED[8 * 16] = {
+static const float KSL_TABLE_SEED[8 * 16] = {
 	/* OCT 0 */
 	0.000, 0.000, 0.000, 0.000,
 	0.000, 0.000, 0.000, 0.000,
@@ -644,7 +644,7 @@ inline void OPL_CALC_RH(FM_OPL *OPL, OPL_CH *CH) {
 /* ----------- initialize time tabls ----------- */
 static void init_timetables(FM_OPL *OPL, int ARRATE, int DRRATE) {
 	int i;
-	double rate;
+	float rate;
 
 	/* make attack rate & decay rate tables */
 	for (i = 0; i < 4; i++)
@@ -654,7 +654,7 @@ static void init_timetables(FM_OPL *OPL, int ARRATE, int DRRATE) {
 		if (i < 60)
 			rate *= 1.0 + (i & 3) * 0.25;		/* b0-1 : x1 , x1.25 , x1.5 , x1.75 */
 		rate *= 1 << ((i >> 2) - 1);						/* b2-5 : shift bit */
-		rate *= (double)(EG_ENT << ENV_BITS);
+		rate *= (float)(EG_ENT << ENV_BITS);
 		OPL->AR_TABLE[i] = (int)(rate / ARRATE);
 		OPL->DR_TABLE[i] = (int)(rate / DRRATE);
 	}
@@ -667,9 +667,9 @@ static void init_timetables(FM_OPL *OPL, int ARRATE, int DRRATE) {
 /* ---------- generic table initialize ---------- */
 static int OPLOpenTable(void) {
 	int s,t;
-	double rate;
+	float rate;
 	int i,j;
-	double pom;
+	float pom;
 
 #ifdef __DS__
 	DS::fastRamReset();
@@ -738,7 +738,7 @@ static int OPLOpenTable(void) {
 	/* envelope counter -> envelope output table */
 	for (i=0; i < EG_ENT; i++) {
 		/* ATTACK curve */
-		pom = pow(((double)(EG_ENT - 1 - i) / EG_ENT), 8) * EG_ENT;
+		pom = pow(((float)(EG_ENT - 1 - i) / EG_ENT), 8) * EG_ENT;
 		/* if (pom >= EG_ENT) pom = EG_ENT-1; */
 		ENV_CURVE[i] = (int)pom;
 		/* DECAY ,RELEASE curve */
@@ -755,7 +755,7 @@ static int OPLOpenTable(void) {
 	/* make LFO vibrate table */
 	for (i=0; i < VIB_ENT; i++) {
 		/* 100cent = 1seminote = 6% ?? */
-		pom = (double)VIB_RATE * 0.06 * sin(2 * M_PI * i / VIB_ENT); /* +-100sect step */
+		pom = (float)VIB_RATE * 0.06 * sin(2 * M_PI * i / VIB_ENT); /* +-100sect step */
 		VIB_TABLE[i]         = (int)(VIB_RATE + (pom * 0.07)); /* +- 7cent */
 		VIB_TABLE[VIB_ENT + i] = (int)(VIB_RATE + (pom * 0.14)); /* +-14cent */
 	}
@@ -793,9 +793,9 @@ static void OPL_initalize(FM_OPL *OPL) {
 	int fn;
 
 	/* frequency base */
-	OPL->freqbase = (OPL->rate) ? ((double)OPL->clock / OPL->rate) / 72 : 0;
+	OPL->freqbase = (OPL->rate) ? ((float)OPL->clock / OPL->rate) / 72 : 0;
 	/* Timer base time */
-	OPL->TimerBase = 1.0/((double)OPL->clock / 72.0 );
+	OPL->TimerBase = 1.0/((float)OPL->clock / 72.0 );
 	/* make time tables */
 	init_timetables(OPL, OPL_ARRATE, OPL_DRRATE);
 	/* make fnumber -> increment counter table */
@@ -803,8 +803,8 @@ static void OPL_initalize(FM_OPL *OPL) {
 		OPL->FN_TABLE[fn] = (uint)(OPL->freqbase * fn * FREQ_RATE * (1<<7) / 2);
 	}
 	/* LFO freq.table */
-	OPL->amsIncr = (int)(OPL->rate ? (double)AMS_ENT * (1 << AMS_SHIFT) / OPL->rate * 3.7 * ((double)OPL->clock/3600000) : 0);
-	OPL->vibIncr = (int)(OPL->rate ? (double)VIB_ENT * (1 << VIB_SHIFT) / OPL->rate * 6.4 * ((double)OPL->clock/3600000) : 0);
+	OPL->amsIncr = (int)(OPL->rate ? (float)AMS_ENT * (1 << AMS_SHIFT) / OPL->rate * 3.7 * ((float)OPL->clock/3600000) : 0);
+	OPL->vibIncr = (int)(OPL->rate ? (float)VIB_ENT * (1 << VIB_SHIFT) / OPL->rate * 6.4 * ((float)OPL->clock/3600000) : 0);
 }
 
 /* ---------- write a OPL registers ---------- */
@@ -847,13 +847,13 @@ void OPLWriteReg(FM_OPL *OPL, int r, int v) {
 				OPL_STATUSMASK_SET(OPL,((~v) & 0x78) | 0x01);
 				/* timer 2 */
 				if (OPL->st[1] != st2) {
-					double interval = st2 ? (double)OPL->T[1] * OPL->TimerBase : 0.0;
+					float interval = st2 ? (float)OPL->T[1] * OPL->TimerBase : 0.0;
 					OPL->st[1] = st2;
 					if (OPL->TimerHandler) (OPL->TimerHandler)(OPL->TimerParam + 1, interval);
 				}
 				/* timer 1 */
 				if (OPL->st[0] != st1) {
-					double interval = st1 ? (double)OPL->T[0] * OPL->TimerBase : 0.0;
+					float interval = st1 ? (float)OPL->T[0] * OPL->TimerBase : 0.0;
 					OPL->st[0] = st1;
 					if (OPL->TimerHandler) (OPL->TimerHandler)(OPL->TimerParam + 0, interval);
 				}
@@ -1225,7 +1225,7 @@ int OPLTimerOver(FM_OPL *OPL, int c) {
 	}
 	/* reload timer */
 	if (OPL->TimerHandler)
-		(OPL->TimerHandler)(OPL->TimerParam + c, (double)OPL->T[c] * OPL->TimerBase);
+		(OPL->TimerHandler)(OPL->TimerParam + c, (float)OPL->T[c] * OPL->TimerBase);
 	return OPL->status >> 7;
 }
 

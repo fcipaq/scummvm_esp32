@@ -283,14 +283,8 @@ void initGraphicsModes(const Graphics::ModeList &modes) {
 }
 
 void initGraphics(int width, int height, const Graphics::PixelFormat *format) {
-	printf("initGraphics(1)\n");
-
 	g_system->beginGFXTransaction();
-	printf("initGraphics(2)\n");
-
 		initCommonGFX();
-		printf("initGraphics(3)\n");
-
 #ifdef USE_RGB_COLOR
 		if (format)
 			g_system->initSize(width, height, format);
@@ -304,12 +298,8 @@ void initGraphics(int width, int height, const Graphics::PixelFormat *format) {
 
 	OSystem::TransactionError gfxError = g_system->endGFXTransaction();
 
-	printf("initGraphics(4)\n");
-	
 //	if (!splash && !GUI::GuiManager::instance()._launched)
 //		splashScreen();
-
-	printf("initGraphics(5)\n");
 	
 	if (gfxError == OSystem::kTransactionSuccess)
 		return;
@@ -323,8 +313,6 @@ void initGraphics(int width, int height, const Graphics::PixelFormat *format) {
 		GUIErrorMessage(message);
 		error("%s", message.c_str());
 	}
-
-	printf("initGraphics(6)\n");
 	
 	// Just show warnings then these occur:
 #ifdef USE_RGB_COLOR

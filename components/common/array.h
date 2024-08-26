@@ -215,7 +215,6 @@ public:
 	}
 
 	void clear() {
-		printf("Array::Clear: this:%p\n",this);
 		freeStorage(_storage, _size);
 		_storage = nullptr;
 		_size = 0;

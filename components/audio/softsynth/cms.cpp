@@ -189,15 +189,15 @@ void CMSEmulator::update(int chip, int16 *buffer, int length) {
 		/* for each channel */
 		for (ch = 0; ch < 6; ch++) {
 			if (saa->channels[ch].freq == 0.0)
-				saa->channels[ch].freq = (double)((2 * 15625) << saa->channels[ch].octave) /
-				(511.0 - (double)saa->channels[ch].frequency);
+				saa->channels[ch].freq = (float)((2 * 15625) << saa->channels[ch].octave) /
+				(511.0 - (float)saa->channels[ch].frequency);
 
 			/* check the actual position in the square wave */
 			saa->channels[ch].counter -= saa->channels[ch].freq;
 			while (saa->channels[ch].counter < 0) {
 				/* calculate new frequency now after the half wave is updated */
-				saa->channels[ch].freq = (double)((2 * 15625) << saa->channels[ch].octave) /
-					(511.0 - (double)saa->channels[ch].frequency);
+				saa->channels[ch].freq = (float)((2 * 15625) << saa->channels[ch].octave) /
+					(511.0 - (float)saa->channels[ch].frequency);
 
 				saa->channels[ch].counter += _sampleRate;
 				saa->channels[ch].level ^= 1;

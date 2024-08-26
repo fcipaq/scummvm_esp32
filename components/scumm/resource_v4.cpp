@@ -53,8 +53,6 @@ void ScummEngine_v4::readIndexFile() {
 	uint16 blocktype;
 	uint32 itemsize;
 	int numblock = 0;
-
-	printf("ScummEngine_v4::readIndexFile(1)\n");
 	
 	debug(9, "readIndexFile()");
 

@@ -37,8 +37,8 @@ class Queue {
 //	typedef T value_type;
 
 public:
-	Queue<T>() : _impl() {}
-	Queue<T>(const Queue<T> &queue) : _impl(queue._impl) {}
+	Queue() : _impl() {}
+	Queue(const Queue &queue) : _impl(queue._impl) {}
 
 	bool empty() const {
 		return _impl.empty();

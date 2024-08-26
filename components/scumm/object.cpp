@@ -27,7 +27,7 @@
 #include "scumm/resource.h"
 #include "scumm/scumm_v0.h"
 #include "scumm/scumm_v7.h"
-//#include "scumm/scumm_v8.h"
+#include "scumm/scumm_v8.h"
 #include "scumm/usage_bits.h"
 #include "scumm/util.h"
 

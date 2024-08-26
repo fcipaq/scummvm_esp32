@@ -452,7 +452,7 @@ void Sound::processSfxQueues() {
 		} else {
 			finished = !_mixer->isSoundHandleActive(*_talkChannelHandle);
 			// calculate speech sound position simulating increment at 60FPS
-			_curSoundPos = (_mixer->getSoundElapsedTime(*_talkChannelHandle) * 60) / 1000;
+			_curSoundPos =(_mixer->getSoundElapsedTime(*_talkChannelHandle) * 60) / 1000;
 		}
 		if ((uint) act < 0x80 && ((_vm->_game.version == 8) || (_vm->_game.version <= 7 && !_vm->_string[0].no_talk_anim))) {
 			a = _vm->derefActor(act, "processSfxQueues");

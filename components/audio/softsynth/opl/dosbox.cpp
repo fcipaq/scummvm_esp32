@@ -51,22 +51,22 @@ Timer::Timer() {
 	delay = 0;
 }
 
-void Timer::update(double time) {
+void Timer::update(float time) {
 	if (!enabled || !delay)
 		return;
-	double deltaStart = time - startTime;
+	float deltaStart = time - startTime;
 	// Only set the overflow flag when not masked
 	if (deltaStart >= 0 && !masked)
 		overflow = 1;
 }
 
-void Timer::reset(double time) {
+void Timer::reset(float time) {
 	overflow = false;
 	if (!delay || !enabled)
 		return;
-	double delta = (time - startTime);
-	double rem = fmod(delta, delay);
-	double next = delay - rem;
+	float delta = (time - startTime);
+	float rem = fmod(delta, delay);
+	float next = delay - rem;
 	startTime = time + next;
 }
 
@@ -74,7 +74,7 @@ void Timer::stop() {
 	enabled = false;
 }
 
-void Timer::start(double time, int scale) {
+void Timer::start(float time, int scale) {
 	//Don't enable again
 	if (enabled)
 		return;
@@ -92,7 +92,7 @@ bool Chip::write(uint32 reg, uint8 val) {
 		timer[1].counter = val;
 		return true;
 	case 0x04:
-		double time = g_system->getMillis() / 1000.0;
+		float time = g_system->getMillis() / 1000.0;
 
 		if (val & 0x80) {
 			timer[0].reset(time);
@@ -127,7 +127,7 @@ bool Chip::write(uint32 reg, uint8 val) {
 }
 
 uint8 Chip::read() {
-	double time = g_system->getMillis() / 1000.0;
+	float time = g_system->getMillis() / 1000.0;
 
 	timer[0].update(time);
 	timer[1].update(time);

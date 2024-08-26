@@ -28,8 +28,8 @@
 #include "graphics/primitives.h"
 #include "graphics/surface.h"
 #include "graphics/conversion.h"
-#include "esp_system.h"
-#include "esp_event.h"
+//#include "esp_system.h"
+//#include "esp_event.h"
 namespace Graphics {
 
 template<typename T>
@@ -75,7 +75,7 @@ void Surface::create(uint16 width, uint16 height, const PixelFormat &f) {
 		pixels = calloc(width * height, format.bytesPerPixel);
 		if(pixels==NULL){
 			printf("Allocating %d bytes failed...\n", width * height*format.bytesPerPixel);
-			printf("HEAP:0x%x (%#08x)\n", esp_get_free_heap_size(), heap_caps_get_free_size(MALLOC_CAP_INTERNAL));
+//			printf("HEAP:0x%x (%#08x)\n", esp_get_free_heap_size(), heap_caps_get_free_size(MALLOC_CAP_INTERNAL));
 		}
 		
 		

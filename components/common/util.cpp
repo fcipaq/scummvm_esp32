@@ -173,7 +173,7 @@ Common::String getHumanReadableBytes(uint64 bytes, Common::String &unitsOut) {
 		return Common::String::format("%lu", (unsigned long int)bytes);
 	}
 
-	double floating = bytes / 1024.0;
+	float floating = bytes / 1024.0;
 	unitsOut = "KB";
 
 	if (floating >= 1024) {

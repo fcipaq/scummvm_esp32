@@ -877,7 +877,7 @@ void initVlcSparse(VLC *vlc, int nb_bits, int nb_codes,
 
 void QDM2Stream::softclipTableInit(void) {
 	uint16 i;
-	double dfl = SOFTCLIP_THRESHOLD - 32767;
+	float dfl = SOFTCLIP_THRESHOLD - 32767;
 	float delta = 1.0 / -dfl;
 
 	for (i = 0; i < ARRAYSIZE(_softclipTable); i++)
@@ -1677,7 +1677,7 @@ void QDM2Stream::synthfilt_build_sb_samples(Common::BitStreamMemory32LELSB *gb, 
 
 					case 10:
 						if ((length - gb->pos()) >= 1) {
-							double f = 0.81;
+							float f = 0.81;
 
 							if (gb->getBit())
 								f = -f;
@@ -2323,7 +2323,7 @@ void QDM2Stream::qdm2_fft_generate_tone(FFTTone *tone)
 	float level, f[6];
 	int i;
 	QDM2Complex c;
-	const double iscale = 2.0 * M_PI / 512.0;
+	const float iscale = 2.0 * M_PI / 512.0;
 
 	tone->phase += tone->phase_shift;
 
@@ -2364,7 +2364,7 @@ void QDM2Stream::qdm2_fft_generate_tone(FFTTone *tone)
 
 void QDM2Stream::qdm2_fft_tone_synthesizer(uint8 sub_packet) {
 	int i, j, ch;
-	const double iscale = 0.25 * M_PI;
+	const float iscale = 0.25 * M_PI;
 
 	for (ch = 0; ch < _channels; ch++) {
 		memset(_fft.complex[ch], 0, _frameSize * sizeof(QDM2Complex));

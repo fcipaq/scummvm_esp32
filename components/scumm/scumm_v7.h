@@ -98,7 +98,7 @@ public:
 	bool isSmushActive() { return _smushActive; }
 
 protected:
-	virtual int runDialog(Dialog &dialog);
+	//virtual int runDialog(Dialog &dialog);
 
 	virtual void scummLoop_handleSound();
 	virtual void scummLoop_handleDrawing();

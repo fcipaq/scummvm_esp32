@@ -38,7 +38,7 @@
 #include "scumm/scumm_v0.h"
 #include "scumm/scumm_v6.h"
 #include "scumm/scumm_v7.h"
-//#include "scumm/scumm_v8.h"
+#include "scumm/scumm_v8.h"
 #include "scumm/sound.h"
 
 
@@ -106,13 +106,8 @@ void ScummEngine_v80he::parseEvent(Common::Event event) {
 #endif
 
 void ScummEngine::parseEvent(Common::Event event) {
-	printf("ScummEngine::parseEvent(0)\n");
 	switch (event.type) {
-	case Common::EVENT_KEYDOWN:
-	
-		printf("ScummEngine::parseEvent(1)\n");
-	
-	
+	case Common::EVENT_KEYDOWN:	
 		if (event.kbd.keycode >= Common::KEYCODE_0 && event.kbd.keycode <= Common::KEYCODE_9 &&
 			((event.kbd.hasFlags(Common::KBD_ALT) && canSaveGameStateCurrently()) ||
 			(event.kbd.hasFlags(Common::KBD_CTRL) && canLoadGameStateCurrently()))) {
@@ -146,9 +141,6 @@ void ScummEngine::parseEvent(Common::Event event) {
 			// Normal key press, pass on to the game.
 			_keyPressed = event.kbd;
 		}
-		printf("ScummEngine::parseEvent(2):_keyPressed.ascii:%d\n", _keyPressed.ascii);
-		printf("ScummEngine::parseEvent(2):_keyDownMap NULL?:%d\n", _keyDownMap==0);
-		
 		
 		// FIXME: We are using ASCII values to index the _keyDownMap here,
 		// yet later one code which checks _keyDownMap will use KEYCODEs
@@ -162,8 +154,7 @@ void ScummEngine::parseEvent(Common::Event event) {
 			debugC(DEBUG_GENERAL, "_keyPressed > 512 (%d)", _keyPressed.ascii);
 		else
 			_keyDownMap[_keyPressed.ascii] = true;
-		
-		printf("ScummEngine::parseEvent(3)\n");
+
 		break;
 
 	case Common::EVENT_KEYUP:
@@ -231,7 +222,6 @@ void ScummEngine::parseEvent(Common::Event event) {
 	default:
 		break;
 	}
-	printf("ScummEngine::parseEvent(4)\n");
 }
 
 void ScummEngine::parseEvents() {
@@ -437,7 +427,7 @@ void ScummEngine_v7::processKeyboard(Common::KeyState lastKeyHit) {
 void ScummEngine_v6::processKeyboard(Common::KeyState lastKeyHit) {
 	if (lastKeyHit.keycode == Common::KEYCODE_t && lastKeyHit.hasFlags(Common::KBD_CTRL)) {
 		//SubtitleSettingsDialog dialog(this, _voiceMode);
-		_voiceMode = 0;//runDialog(dialog);
+		_voiceMode = 1;//runDialog(dialog);
 
 		switch (_voiceMode) {
 		case 0:
@@ -578,9 +568,7 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 			stopTalk();
 
 	} else if (cutsceneExitKeyEnabled && (lastKeyHit.keycode == Common::KEYCODE_ESCAPE && lastKeyHit.hasFlags(0))) {
-		printf("ScummEngine::processKeyboard(1)\n");
 		abortCutscene();
-		printf("ScummEngine::processKeyboard(2)\n");
 		// VAR_CUTSCENEEXIT_KEY doesn't exist in SCUMM0
 		if (VAR_CUTSCENEEXIT_KEY != 0xFF)
 			_mouseAndKeyboardStat = VAR(VAR_CUTSCENEEXIT_KEY);
@@ -621,6 +609,7 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 
 		// Display the talk speed
 		//ValueDisplayDialog dlg(_("Subtitle speed: "), 0, 9, 9 - _defaultTalkDelay, '+', '-');
+		// fcipaq
 		_defaultTalkDelay = 9;// - runDialog(dlg);
 
 		// Save the new talkspeed value to ConfMan

@@ -1228,7 +1228,7 @@ void CharsetRendererNut::setCurID(int32 id) {
 	_curId = id;
 	if (!_fr[id]) {
 		char fontname[11];
-		sprintf(fontname, "font%d.nut", id);
+		sprintf(fontname, "font%d.nut", (int) id);
 		_fr[id] = new NutRenderer(_vm, fontname);
 	}
 	_current = _fr[id];

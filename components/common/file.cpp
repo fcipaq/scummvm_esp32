@@ -42,75 +42,52 @@ File::~File() {
 }
 
 bool File::open(const String &filename) {
-	printf("File::open(1) in file.cpp.\n");
 	return open(filename, SearchMan);
 }
 
 bool File::open(const String &filename, Archive &archive) {
-	
-	printf("File::open(10) in file.cpp.\n");
-	
-	
 	assert(!filename.empty());
 	assert(!_handle);
-
-	printf("File::open(11) in file.cpp.\n");
 	
 	Common::String filename2 = ConfMan.get("path") + Common::String("/") + filename;
 	//Common::String filename2 = Common::String("/sd/roms/scummvm/monkey1/") + filename;
-	printf("File:%s\n", filename2.c_str());
-	
+//	printf("Trying to open: %s\n", filename2.c_str());
 	SeekableReadStream *stream = nullptr;
 	stream = StdioStream::makeFromPath(filename2.c_str(), false);
-	/*if ((stream = archive.createReadStreamForMember(filename))) {
+/*
+	if ((stream = archive.createReadStreamForMember(filename))) {
 		debug(8, "Opening hashed: %s", filename.c_str());
 	} else if ((stream = archive.createReadStreamForMember(filename + "."))) {
 		// WORKAROUND: Bug #1458388: "SIMON1: Game Detection fails"
 		// sometimes instead of "GAMEPC" we get "GAMEPC." (note trailing dot)
 		debug(8, "Opening hashed: %s.", filename.c_str());
-	}*/
-
-	printf("File::open(12) in file.cpp: %p.\n", stream);
+	}
+*/
 	return open(stream, filename);
 }
 
 bool File::open(const FSNode &node) {
 	assert(!_handle);
 
-	printf("File::open(2) in file.cpp\n");
-	printf("%s\n", node.getPath().c_str());
-	
 	if (!node.exists()) {
-		printf("File::open(3) in file.cpp\n");
-
-		printf("File::open: '%s' does not exist\n", node.getPath().c_str());
 		warning("File::open: '%s' does not exist", node.getPath().c_str());
 		return false;
 	} else if (node.isDirectory()) {
-		printf("File::open(4) in file.cpp\n");
 		warning("File::open: '%s' is a directory", node.getPath().c_str());
 		return false;
 	}
 
-		printf("File::open(5) in file.cpp\n");
-
-	
 	SeekableReadStream *stream = node.createReadStream();
-		printf("File::open(6) in file.cpp\n");
 	return open(stream, node.getPath());
 }
 
 bool File::open(SeekableReadStream *stream, const String &name) {
 	assert(!_handle);
 
-	printf("File::open(20) in file.cpp.\n");
-	
 	if (stream) {
 		_handle = stream;
 		_name = name;
 	} else {
-		printf("File::open: opening '%s' failed\n", name.c_str());
-
 		debug(2, "File::open: opening '%s' failed", name.c_str());
 	}
 	return _handle != nullptr;

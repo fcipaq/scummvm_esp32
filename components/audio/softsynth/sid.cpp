@@ -317,11 +317,11 @@ RESID_INLINE reg12 WaveformGenerator::output() {
 /**
  * Calculation of coefficients.
  */
-inline void cubic_coefficients(double x1, double y1, double x2, double y2,
-						double k1, double k2,
-						double& a, double& b, double& c, double& d)
+inline void cubic_coefficients(float x1, float y1, float x2, float y2,
+						float k1, float k2,
+						float& a, float& b, float& c, float& d)
 {
-	double dx = x2 - x1, dy = y2 - y1;
+	float dx = x2 - x1, dy = y2 - y1;
 
 	a = ((k1 + k2) - 2*dy/dx)/(dx*dx);
 	b = ((k2 - k1)/dx - 3*(x1 + x2)*a)/2;
@@ -333,32 +333,32 @@ inline void cubic_coefficients(double x1, double y1, double x2, double y2,
  * Evaluation of cubic polynomial by forward differencing.
  */
 template<class PointPlotter>
-inline void interpolate_segment(double x1, double y1, double x2, double y2,
-								double k1, double k2,
-								PointPlotter plot, double res)
+inline void interpolate_segment(float x1, float y1, float x2, float y2,
+								float k1, float k2,
+								PointPlotter plot, float res)
 {
-	double a, b, c, d;
+	float a, b, c, d;
 	cubic_coefficients(x1, y1, x2, y2, k1, k2, a, b, c, d);
 
-	double y = ((a*x1 + b)*x1 + c)*x1 + d;
-	double dy = (3*a*(x1 + res) + 2*b)*x1*res + ((a*res + b)*res + c)*res;
-	double d2y = (6*a*(x1 + res) + 2*b)*res*res;
-	double d3y = 6*a*res*res*res;
+	float y = ((a*x1 + b)*x1 + c)*x1 + d;
+	float dy = (3*a*(x1 + res) + 2*b)*x1*res + ((a*res + b)*res + c)*res;
+	float d2y = (6*a*(x1 + res) + 2*b)*res*res;
+	float d3y = 6*a*res*res*res;
 
 	// Calculate each point.
-	for (double x = x1; x <= x2; x += res) {
+	for (float x = x1; x <= x2; x += res) {
 		plot(x, y);
 		y += dy; dy += d2y; d2y += d3y;
 	}
 }
 
 template<class PointIter>
-inline double x(PointIter p) {
+inline float x(PointIter p) {
 	return (*p)[0];
 }
 
 template<class PointIter>
-inline double y(PointIter p) {
+inline float y(PointIter p) {
 	return (*p)[1];
 }
 
@@ -371,8 +371,8 @@ inline double y(PointIter p) {
  * introduced by repeating points.
  */
 template<class PointIter, class PointPlotter>
-inline void interpolate(PointIter p0, PointIter pn, PointPlotter plot, double res) {
-	double k1, k2;
+inline void interpolate(PointIter p0, PointIter pn, PointPlotter plot, float res) {
+	float k1, k2;
 
 	// Set up points for first curve segment.
 	PointIter p1 = p0; ++p1;
@@ -421,7 +421,7 @@ public:
 	PointPlotter(F* arr) : f(arr) {
 	}
 
-	void operator ()(double x, double y) {
+	void operator ()(float x, float y) {
 		// Clamp negative values to zero.
 		if (y < 0) {
 			y = 0;
@@ -562,7 +562,7 @@ void Filter::writeMODE_VOL(reg8 mode_vol) {
 
 // Set filter cutoff frequency.
 void Filter::set_w0() {
-	const double pi = 3.1415926535897932385;
+	const float pi = 3.1415926535897932385;
 
 	// Multiply with 1.048576 to facilitate division by 1 000 000 by right-
 	// shifting 20 times (2 ^ 20 = 1048576).
@@ -1007,8 +1007,8 @@ void ExternalFilter::enable_filter(bool enable) {
 	enabled = enable;
 }
 
-void ExternalFilter::set_sampling_parameter(double pass_freq) {
-	static const double pi = 3.1415926535897932385;
+void ExternalFilter::set_sampling_parameter(float pass_freq) {
+	static const float pi = 3.1415926535897932385;
 
 	w0hp = 105;
 	w0lp = (sound_sample) (pass_freq * (2.0 * pi * 1.048576));
@@ -1277,9 +1277,9 @@ void SID::enable_external_filter(bool enable) {
  * to slightly below 20kHz. This constraint ensures that the FIR table is
  * not overfilled.
  */
-bool SID::set_sampling_parameters(double clock_freq,
-								  double sample_freq, double pass_freq,
-								  double filter_scale)
+bool SID::set_sampling_parameters(float clock_freq,
+								  float sample_freq, float pass_freq,
+								  float filter_scale)
 {
 	// The default passband limit is 0.9*sample_freq/2 for sample
 	// frequencies below ~ 44.1kHz, and 20kHz for higher sample frequencies.

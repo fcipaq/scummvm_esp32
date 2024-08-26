@@ -117,7 +117,7 @@ inline OutputT rad2deg(InputT rad) {
 
 // Handle the case differently when the input type is double
 template<class OutputT> 
-inline OutputT rad2deg(double rad) {
+inline OutputT rad2deg(float rad) {
 	return (OutputT)( rad * 57.2957795130823);
 }
 
@@ -138,7 +138,7 @@ inline OutputT deg2rad(InputT deg) {
 
 // Handle the case differently when the input type is double
 template<class OutputT> 
-inline OutputT deg2rad(double deg) {
+inline OutputT deg2rad(float deg) {
 	return (OutputT)( deg * 0.0174532925199433);
 }
 

@@ -30,7 +30,7 @@
 #include "scumm/scumm.h"
 #include "scumm/scumm_v6.h"
 #include "scumm/scumm_v7.h"
-//#include "scumm/scumm_v8.h"
+#include "scumm/scumm_v8.h"
 #include "scumm/util.h"
 #include "scumm/charset.h"
 

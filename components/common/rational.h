@@ -78,7 +78,7 @@ public:
 	Rational getInverse() const;
 
 	int toInt() const;
-	double toDouble() const;
+	float toDouble() const;
 	frac_t toFrac() const;
 
 	int getNumerator() const { return _num; }

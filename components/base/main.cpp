@@ -248,13 +248,13 @@ static Common::Error runGame(const Plugin *plugin, OSystem &system, const Common
 	// On creation the engine should have set up all debug levels so we can use
 	// the command line arguments here
 	Common::StringTokenizer tokenizer(edebuglevels, " ,");
-	while (!tokenizer.empty()) {
-		Common::String token = tokenizer.nextToken();
-		//if (token.equalsIgnoreCase("all"))
-			//DebugMan.enableAllDebugChannels();
-		//else if (!DebugMan.enableDebugChannel(token))
-			//warning(_("Engine does not support debug level '%s'"), token.c_str());
-	}
+//	while (!tokenizer.empty()) {
+//		Common::String token = tokenizer.nextToken();
+//		if (token.equalsIgnoreCase("all"))
+//			DebugMan.enableAllDebugChannels();
+//		else if (!DebugMan.enableDebugChannel(token))
+//			warning(_("Engine does not support debug level '%s'"), token.c_str());
+//	}
 
 #ifdef USE_TRANSLATION
 	Common::String previousLanguage = TransMan.getCurrentLanguage();
@@ -292,7 +292,7 @@ static Common::Error runGame(const Plugin *plugin, OSystem &system, const Common
 	delete engine;
 
 	// We clear all debug levels again even though the engine should do it
-	//DebugMan.clearAllDebugChannels();
+	DebugMan.clearAllDebugChannels();
 
 	// Reset the file/directory mappings
 	SearchMan.clear();
@@ -496,7 +496,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	// Do it here to prevent fragmentation later
 	system.getAudioCDManager();
 	MusicManager::instance();
-	//Common::DebugManager::instance();
+	Common::DebugManager::instance();
 
 	// Init the event manager. As the virtual keyboard is loaded here, it must
 	// take place after the backend is initiated and the screen has been setup
@@ -659,7 +659,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	PluginManager::destroy();
 	GUI::GuiManager::destroy();
 	Common::ConfigManager::destroy();
-	//Common::DebugManager::destroy();
+	Common::DebugManager::destroy();
 	Common::OSDMessageQueue::destroy();
 #ifdef ENABLE_EVENTRECORDER
 	GUI::EventRecorder::destroy();

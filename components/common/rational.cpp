@@ -260,8 +260,8 @@ int Rational::toInt() const {
 	return _num / _denom;
 }
 
-double Rational::toDouble() const {
-	return ((double)_num) / ((double)_denom);
+float Rational::toDouble() const {
+	return ((float)_num) / ((float)_denom);
 }
 
 frac_t Rational::toFrac() const {

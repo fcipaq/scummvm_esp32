@@ -64,7 +64,7 @@ public:
 private:
 	float *_tableEOS;
 	float *_table;
-	double _radResolution; // Smallest radian increment
+	float _radResolution; // Smallest radian increment
 	int _refSize; // _nPoints / 4
 	int _nPoints; // range of operator[]
 };

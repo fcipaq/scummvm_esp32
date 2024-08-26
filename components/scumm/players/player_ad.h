@@ -65,7 +65,7 @@ private:
 	int _musicVolume;
 	int _sfxVolume;
 
-	//OPL::OPL *_opl2;
+	OPL::OPL *_opl2;
 
 	int _musicResource;
 	int32 _engineMusicTimer;

@@ -38,7 +38,7 @@
 #include "scumm/he/intern_he.h"
 #include "scumm/scumm_v0.h"
 #include "scumm/scumm_v7.h"
-//#include "scumm/scumm_v8.h"
+#include "scumm/scumm_v8.h"
 #include "scumm/file.h"
 #include "scumm/file_nes.h"
 #include "scumm/resource.h"
@@ -1013,8 +1013,6 @@ DetectedGames ScummMetaEngine::detectGames(const Common::FSList &fslist) const {
 	Common::List<DetectorResult> results;
 	Scumm::detectGames(fslist, results, 0);
 
-	printf("ScummMetaEngine::detectGames(1)\n");
-	
 	for (Common::List<DetectorResult>::iterator
 	          x = results.begin(); x != results.end(); ++x) {
 		const PlainGameDescriptor *g = findPlainGameDescriptor(x->game.gameid, gameDescriptions);
@@ -1028,12 +1026,8 @@ DetectedGames ScummMetaEngine::detectGames(const Common::FSList &fslist) const {
 
 		game.setGUIOptions(x->game.guioptions + MidiDriver::musicType2GUIO(x->game.midi));
 		game.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(x->language));
-		printf("ScummMetaEngine::detectGames(x):%s\n", game.description.c_str());
-		
 		detectedGames.push_back(game);
 	}
-	printf("ScummMetaEngine::detectGames(2)\n");
-
 	return detectedGames;
 }
 
@@ -1046,8 +1040,6 @@ Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) co
 	assert(syst);
 	assert(engine);
 	
-	printf("ScummMetaEngine::createInstance(1)\n");
-
 	const char *gameid = ConfMan.get("gameid").c_str();
 
 	// We start by checking whether the specified game ID is obsolete.
@@ -1055,19 +1047,17 @@ Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) co
 	// the correct new game ID (and platform, if specified).
 	Engines::upgradeTargetIfNecessary(obsoleteGameIDsTable);
 
-	printf("Path: %s\n",ConfMan.get("path").c_str());
-	printf("Gameid: %s\n",gameid);
+	//printf("Path: %s\n",ConfMan.get("path").c_str());
+	//printf("Gameid: %s\n",gameid);
 	
 	// Fetch the list of files in the current directory
 	Common::FSList fslist;
 	Common::FSNode dir(ConfMan.get("path"));
 	if (!dir.isDirectory()){
-		printf("ScummMetaEngine::createInstance(1a)\n");
 		return Common::kPathNotDirectory;
 	}
 	if (!dir.getChildren(fslist, Common::FSNode::kListAll))
 	{
-		printf("ScummMetaEngine::createInstance(1b)\n");
 		return Common::kNoGameDataFoundError;
 	}
 
@@ -1077,7 +1067,6 @@ Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) co
 
 	// Unable to locate game data
 	if (results.empty()){
-		printf("ScummMetaEngine::createInstance(1c)\n");
 		return Common::kNoGameDataFoundError;
 	}
 
@@ -1107,7 +1096,6 @@ Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) co
 	// Still no unique match found -> print a warning
 	if (results.size() > 1)
 		warning("Engine_SCUMM_create: No unique game candidate found, using first one");
-	printf("ScummMetaEngine::createInstance(2)\n");
 
 	// Simply use the first match
 	DetectorResult res(*(results.begin()));
@@ -1153,7 +1141,6 @@ Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) co
 	// TODO: Do we really still need / want the platform override ?
 	if (ConfMan.hasKey("platform"))
 		res.game.platform = Common::parsePlatform(ConfMan.get("platform"));
-	printf("ScummMetaEngine::createInstance(3)\n");
 
 	// Language override
 	if (ConfMan.hasKey("language"))
@@ -1165,9 +1152,7 @@ Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) co
 	if (res.game.platform == Common::kPlatformFMTowns && res.game.version == 3)
 		res.game.midi = MDT_TOWNS;
 	// Finally, we have massaged the GameDescriptor to our satisfaction, and can
-	// instantiate the appropriate game engine. Hooray!
-	printf("ScummMetaEngine::createInstance(4)\n");
-	
+	// instantiate the appropriate game engine. Hooray!	
 	switch (res.game.version) {
 	case 0:
 		*engine = new ScummEngine_v0(syst, res);
@@ -1186,9 +1171,7 @@ Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) co
 		*engine = new ScummEngine_v4(syst, res);		
 		break;
 	case 5:
-		printf("ScummMetaEngine::createInstance(5)\n");
 		*engine = new ScummEngine_v5(syst, res);
-		printf("ScummMetaEngine::createInstance(5):v5!\n");
 		break;
 	case 6:
 		switch (res.game.heversion) {

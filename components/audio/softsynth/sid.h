@@ -241,7 +241,7 @@ public:
 	ExternalFilter();
 
 	void enable_filter(bool enable);
-	void set_sampling_parameter(double pass_freq);
+	void set_sampling_parameter(float pass_freq);
 
 	void updateClock(cycle_count delta_t, sound_sample Vi);
 	void reset();
@@ -305,9 +305,9 @@ public:
 
 	void enable_filter(bool enable);
 	void enable_external_filter(bool enable);
-	bool set_sampling_parameters(double clock_freq,
-		double sample_freq, double pass_freq = -1,
-		double filter_scale = 0.97);
+	bool set_sampling_parameters(float clock_freq,
+		float sample_freq, float pass_freq = -1,
+		float filter_scale = 0.97);
 
 	void updateClock(cycle_count delta_t);
 	int updateClock(cycle_count& delta_t, short* buf, int n, int interleave = 1);
@@ -328,7 +328,7 @@ protected:
 	reg8 bus_value;
 	cycle_count bus_value_ttl;
 
-	double clock_frequency;
+	float clock_frequency;
 
 	// Fixpoint constants.
 	static const int FIXP_SHIFT;

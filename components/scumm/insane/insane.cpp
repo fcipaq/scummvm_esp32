@@ -606,7 +606,10 @@ void Insane::readFileToMem(const char *name, byte **buf) {
 		error("Cannot open file %s", name);
 	len = in.size();
 	*buf = (byte *)malloc(len);
+	assert(*buf);
 	in.read(*buf, len);
+	// fcipaq
+	in.close();
 }
 
 void Insane::startVideo(const char *filename, int num, int argC, int frameRate,

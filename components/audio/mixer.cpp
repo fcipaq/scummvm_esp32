@@ -236,12 +236,11 @@ void MixerImpl::playStream(
 		return;
 	}
 
-	if(!_mixerReady)return;
 	assert(_mixerReady);
 
 	// Prevent duplicate sounds
 	if (id != -1) {
-		for (int i = 0; i != NUM_CHANNELS; i++)
+		for (int i = 0; i != NUM_CHANNELS; i++) {
 			if (_channels[i] != 0 && _channels[i]->getId() == id) {
 				// Delete the stream if were asked to auto-dispose it.
 				// Note: This could cause trouble if the client code does not
@@ -253,6 +252,7 @@ void MixerImpl::playStream(
 					delete stream;
 				return;
 			}
+		}
 	}
 
 #ifdef AUDIO_REVERSE_STEREO

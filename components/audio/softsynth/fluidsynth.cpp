@@ -48,7 +48,7 @@ private:
 protected:
 	// Because GCC complains about casting from const to non-const...
 	void setInt(const char *name, int val);
-	void setNum(const char *name, double num);
+	void setNum(const char *name, float num);
 	void setStr(const char *name, const char *str);
 
 	void generateSamples(int16 *buf, int len);
@@ -97,7 +97,7 @@ void MidiDriver_FluidSynth::setInt(const char *name, int val) {
 	delete[] name2;
 }
 
-void MidiDriver_FluidSynth::setNum(const char *name, double val) {
+void MidiDriver_FluidSynth::setNum(const char *name, float val) {
 	char *name2 = scumm_strdup(name);
 
 	fluid_settings_setnum(_settings, name2, val);
@@ -127,7 +127,7 @@ int MidiDriver_FluidSynth::open() {
 	// soften the sound, not amplify it, so instead we add an option to
 	// adjust the gain of FluidSynth itself.
 
-	double gain = (double)ConfMan.getInt("midi_gain") / 100.0;
+	float gain = (float)ConfMan.getInt("midi_gain") / 100.0;
 
 	setNum("synth.gain", gain);
 	setNum("synth.sample-rate", _outputRate);
@@ -138,9 +138,9 @@ int MidiDriver_FluidSynth::open() {
 		fluid_synth_set_chorus_on(_synth, 1);
 
 		int chorusNr = ConfMan.getInt("fluidsynth_chorus_nr");
-		double chorusLevel = (double)ConfMan.getInt("fluidsynth_chorus_level") / 100.0;
-		double chorusSpeed = (double)ConfMan.getInt("fluidsynth_chorus_speed") / 100.0;
-		double chorusDepthMs = (double)ConfMan.getInt("fluidsynth_chorus_depth") / 10.0;
+		float chorusLevel = (float)ConfMan.getInt("fluidsynth_chorus_level") / 100.0;
+		float chorusSpeed = (float)ConfMan.getInt("fluidsynth_chorus_speed") / 100.0;
+		float chorusDepthMs = (float)ConfMan.getInt("fluidsynth_chorus_depth") / 10.0;
 
 		Common::String chorusWaveForm = ConfMan.get("fluidsynth_chorus_waveform");
 		int chorusType = FLUID_CHORUS_MOD_SINE;
@@ -158,10 +158,10 @@ int MidiDriver_FluidSynth::open() {
 	if (ConfMan.getBool("fluidsynth_reverb_activate")) {
 		fluid_synth_set_reverb_on(_synth, 1);
 
-		double reverbRoomSize = (double)ConfMan.getInt("fluidsynth_reverb_roomsize") / 100.0;
-		double reverbDamping = (double)ConfMan.getInt("fluidsynth_reverb_damping") / 100.0;
+		float reverbRoomSize = (float)ConfMan.getInt("fluidsynth_reverb_roomsize") / 100.0;
+		float reverbDamping = (float)ConfMan.getInt("fluidsynth_reverb_damping") / 100.0;
 		int reverbWidth = ConfMan.getInt("fluidsynth_reverb_width");
-		double reverbLevel = (double)ConfMan.getInt("fluidsynth_reverb_level") / 100.0;
+		float reverbLevel = (float)ConfMan.getInt("fluidsynth_reverb_level") / 100.0;
 
 		fluid_synth_set_reverb(_synth, reverbRoomSize, reverbDamping, reverbWidth, reverbLevel);
 	} else {

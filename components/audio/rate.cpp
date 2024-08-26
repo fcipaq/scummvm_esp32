@@ -35,6 +35,12 @@
 #include "common/textconsole.h"
 #include "common/util.h"
 
+/*
+#ifndef _ESP32
+#define _ESP32
+#endif
+*/
+
 namespace Audio {
 
 
@@ -117,7 +123,7 @@ int SimpleRateConverter<stereo, reverseStereo>::flow(AudioStream &input, st_samp
 
 	ostart = obuf;
 	oend = obuf + osamp * 2;
-
+	printf("Stream is stereo: %d\n", stereo);
 	while (obuf < oend) {
 
 		// read enough input samples so that opos >= 0
@@ -319,6 +325,9 @@ public:
 		for (; len > 0; len -= (stereo ? 2 : 1)) {
 			st_sample_t out0, out1;
 			out0 = *ptr++;
+#ifdef _ESP32
+			clampedAdd(obuf[0    ], (out0 * (int)vol_l) / Audio::Mixer::kMaxMixerVolume);
+#else
 			out1 = (stereo ? *ptr++ : out0);
 
 			// output left channel
@@ -326,7 +335,7 @@ public:
 
 			// output right channel
 			clampedAdd(obuf[reverseStereo ^ 1], (out1 * (int)vol_r) / Audio::Mixer::kMaxMixerVolume);
-
+#endif
 			obuf += 2;
 		}
 		return (obuf - ostart) / 2;

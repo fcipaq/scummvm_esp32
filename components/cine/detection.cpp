@@ -74,9 +74,7 @@ const char *CineMetaEngine::getOriginalCopyright() const {
 }
 
 Common::Error CineMetaEngine::createInstance(OSystem *syst, Engine **engine) const {
-	printf("CineMetaEngine::createInstance(1)\n");
 	Engines::upgradeTargetIfNecessary(obsoleteGameIDsTable);
-	printf("CineMetaEngine::createInstance(2)\n");
 	return AdvancedMetaEngine::createInstance(syst, engine);
 }
 	

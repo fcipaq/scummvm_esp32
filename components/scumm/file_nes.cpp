@@ -1363,9 +1363,6 @@ bool ScummNESFile::generateIndex() {
 
 bool ScummNESFile::open(const Common::String &filename) {
 
-	printf("ScummNESFile::open(1)\n");
-
-
 	if (_ROMset == kROMsetNum) {
 		Common::String md5str;
 		File f;

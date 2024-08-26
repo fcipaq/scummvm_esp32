@@ -61,7 +61,7 @@ static const StreamFileFormat STREAM_FILEFORMATS[] = {
 #ifdef USE_MAD
 	{ "MPEG Layer 3", ".mp3",  makeMP3Stream },
 #endif
-	//{ "MPEG-4 Audio",   ".m4a",  makeQuickTimeStream },
+	{ "MPEG-4 Audio",   ".m4a",  makeQuickTimeStream },
 };
 
 SeekableAudioStream *SeekableAudioStream::openStreamFile(const Common::String &basename) {

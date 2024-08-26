@@ -43,7 +43,7 @@ namespace DOSBox {
 
 namespace DBOPL {
 
-#define OPLRATE		((double)(14318180.0 / 288.0))
+#define OPLRATE		((float)(14318180.0 / 288.0))
 #define TREMOLO_TABLE 52
 
 //Try to use most precision for frequencies
@@ -1249,7 +1249,7 @@ void Chip::GenerateBlock3( Bitu total, Bit32s* output  ) {
 }
 
 void Chip::Setup( Bit32u rate ) {
-	double scale = OPLRATE / (double)rate;
+	float scale = OPLRATE / (float)rate;
 
 	//Noise counter is run at the same precision as general waves
 	noiseAdd = (Bit32u)( 0.5 + scale * ( 1 << LFO_SH ) );
@@ -1265,7 +1265,7 @@ void Chip::Setup( Bit32u rate ) {
 	//With higher octave this gets shifted up
 	//-1 since the freqCreateTable = *2
 #ifdef WAVE_PRECISION
-	double freqScale = ( 1 << 7 ) * scale * ( 1 << ( WAVE_SH - 1 - 10));
+	float freqScale = ( 1 << 7 ) * scale * ( 1 << ( WAVE_SH - 1 - 10));
 	for ( int i = 0; i < 16; i++ ) {
 		freqMul[i] = (Bit32u)( 0.5 + freqScale * FreqCreateTable[ i ] );
 	}
@@ -1397,7 +1397,7 @@ void InitTables( void ) {
 	for ( int i = 0; i < 384; i++ ) {
 		int s = i * 8;
 		//TODO maybe keep some of the precision errors of the original table?
-		double val = ( 0.5 + ( pow(2.0, -1.0 + ( 255 - s) * ( 1.0 /256 ) )) * ( 1 << MUL_SH ));
+		float val = ( 0.5 + ( pow(2.0, -1.0 + ( 255 - s) * ( 1.0 /256 ) )) * ( 1 << MUL_SH ));
 		MulTable[i] = (Bit16u)(val);
 	}
 

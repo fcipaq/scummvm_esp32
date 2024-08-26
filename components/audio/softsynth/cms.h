@@ -35,16 +35,16 @@ struct saa1099_channel {
 	int envelope[2];			/* envelope (0x00..0x0f or 0x10 == off) */
 
 	/* vars to simulate the square wave */
-	double counter;
-	double freq;
+	float counter;
+	float freq;
 	int level;
 };
 
 /* this structure defines a noise channel */
 struct saa1099_noise {
 	/* vars to simulate the noise generator output */
-	double counter;
-	double freq;
+	float counter;
+	float freq;
 	int level;				/* noise polynomal shifter */
 };
 

@@ -45,7 +45,7 @@ enum {
 };
 
 
-typedef void (*OPL_TIMERHANDLER)(int channel,double interval_Sec);
+typedef void (*OPL_TIMERHANDLER)(int channel,float interval_Sec);
 typedef void (*OPL_IRQHANDLER)(int param,int irq);
 typedef void (*OPL_UPDATEHANDLER)(int param,int min_interval_us);
 
@@ -106,8 +106,8 @@ typedef struct fm_opl_f {
 	uint8 type;			/* chip type                         */
 	int clock;			/* master clock  (Hz)                */
 	int rate;			/* sampling rate (Hz)                */
-	double freqbase;	/* frequency base                    */
-	double TimerBase;	/* Timer base time (==sampling time) */
+	float freqbase;	/* frequency base                    */
+	float TimerBase;	/* Timer base time (==sampling time) */
 	uint8 address;		/* address register                  */
 	uint8 status;		/* status flag                       */
 	uint8 statusmask;	/* status mask                       */

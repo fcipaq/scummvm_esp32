@@ -25,7 +25,7 @@
 #include "scumm/scumm.h"
 #include "scumm/scumm_v0.h"
 #include "scumm/scumm_v7.h"
-//#include "scumm/scumm_v8.h"
+#include "scumm/scumm_v8.h"
 #include "scumm/sound.h"
 #include "scumm/he/intern_he.h"
 #include "scumm/he/logic_he.h"

@@ -202,13 +202,16 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 	}
 
 	Common::String failedDevStr;
+	
 	if (getMusicType(hdl) == MT_INVALID) {
 		// If the expressly selected driver or device cannot be found (no longer compiled in, turned off, etc.)
 		// we display a warning and continue.
 		failedDevStr = selDevStr;
 		Common::String warningMsg = Common::String::format(_("The selected audio device '%s' was not found (e.g. might be turned off or disconnected)."), failedDevStr.c_str()) + " " + _("Attempting to fall back to the next available device...");
-		GUI::MessageDialog dialog(warningMsg);
-		dialog.runModal();
+		//GUI::MessageDialog dialog(warningMsg);
+		//dialog.runModal();
+		printf("The selected audio device '%s' was not found (e.g. might be turned off or disconnected).\n Attempting to fall back to the next available device...\n", \
+		failedDevStr.c_str());
 	}
 
 	MusicType tp = getMusicType(reslt);
@@ -219,8 +222,10 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 			// If the expressly selected device cannot be used we display a warning and continue.
 			failedDevStr = getDeviceString(hdl, MidiDriver::kDeviceName);
 			Common::String warningMsg = Common::String::format(_("The selected audio device '%s' cannot be used. See log file for more information."), failedDevStr.c_str()) + " " + _("Attempting to fall back to the next available device...");
-			GUI::MessageDialog dialog(warningMsg);
-			dialog.runModal();
+			//GUI::MessageDialog dialog(warningMsg);
+			//dialog.runModal();
+		        printf("The selected audio device '%s' cannot be used. See log file for more information.\n Attempting to fall back to the next available device...\n", \
+		        failedDevStr.c_str());
 		}
 	}
 
@@ -255,8 +260,10 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 					// missing device is selected as preferred device and also as GM or MT-32 device).
 					if (failedDevStr != devStr) {
 						Common::String warningMsg = Common::String::format(_("The preferred audio device '%s' was not found (e.g. might be turned off or disconnected)."), devStr.c_str()) + " " + _("Attempting to fall back to the next available device...");
-						GUI::MessageDialog dialog(warningMsg);
-						dialog.runModal();
+						//GUI::MessageDialog dialog(warningMsg);
+						//dialog.runModal();
+						printf("The preferred audio device '%s' was not found (e.g. might be turned off or disconnected).\n \
+						Attempting to fall back to the next available device...\n", devStr.c_str());
 					}
 				} else if (type != MT_AUTO) {
 					if (checkDevice(hdl)) {
@@ -269,9 +276,11 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 						// Don't warn about the failing device if we did already (this becomes relevant if the failing
 						// device is selected as preferred device and also as GM or MT-32 device).
 						if (failedDevStr != getDeviceString(hdl, MidiDriver::kDeviceName)) {
-							Common::String warningMsg = Common::String::format(_("The preferred audio device '%s' cannot be used. See log file for more information."), getDeviceString(hdl, MidiDriver::kDeviceName).c_str()) + " " + _("Attempting to fall back to the next available device...");
-							GUI::MessageDialog dialog(warningMsg);
-							dialog.runModal();
+							Common::String warningMsg = Common::String::format(_("The preferred audio device '%s' cannot be used. See log file for more information."), getDeviceString(hdl, MidiDriver::kDeviceName).c_str()) + " " + _("Attempting to fall back to the next available device...\n");
+							//GUI::MessageDialog dialog(warningMsg);
+							//dialog.runModal();
+							printf("The preferred audio device '%s' cannot be used. See log file for more information.\n \
+							Attempting to fall back to the next available device...\n", getDeviceString(hdl, MidiDriver::kDeviceName).c_str());
 						}
 					}
 				}

@@ -70,7 +70,7 @@
 #include "scumm/he/moonbase/moonbase.h"
 #include "scumm/scumm_v0.h"
 #include "scumm/scumm_v7.h"
-//#include "scumm/scumm_v8.h"
+#include "scumm/scumm_v8.h"
 #include "scumm/sound.h"
 #include "scumm/imuse/sysex.h"
 #include "scumm/he/sprite_he.h"
@@ -124,8 +124,6 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	  _currentScript(0xFF), // Let debug() work on init stage
 	  _language(dr.language)
 	  {
-
-	  printf("ScummEngine::ScummEngine(1)\n");
 	  
 #ifdef USE_RGB_COLOR
 	if (_game.features & GF_16BIT_COLOR) {
@@ -600,7 +598,6 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	//_mainMenuDialog = new ScummMenuDialog(this);
 #endif
 
-	  printf("ScummEngine::ScummEngine done.\n");
 }
 
 
@@ -674,8 +671,6 @@ ScummEngine::~ScummEngine() {
 ScummEngine_v5::ScummEngine_v5(OSystem *syst, const DetectorResult &dr)
  : ScummEngine(syst, dr) {
 
-	printf("ScummEngine_v5::ScummEngine_v5(1)\n");
- 
 	// All "classic" games (V5 and older) encrypted their data files
 	// with exception of the GF_OLD256 games and the PC-Engine version
 	// of Loom.
@@ -693,7 +688,6 @@ ScummEngine_v5::ScummEngine_v5(OSystem *syst, const DetectorResult &dr)
 	memset(_saveLoadVarsFilename, 0, sizeof(_saveLoadVarsFilename));
 
 	_resultVarNumber = 0;
-	printf("ScummEngine_v5::ScummEngine_v5 done.\n");
 }
 
 ScummEngine_v4::ScummEngine_v4(OSystem *syst, const DetectorResult &dr)
@@ -986,12 +980,8 @@ ScummEngine_vCUPhe::~ScummEngine_vCUPhe() {
 
 Common::Error ScummEngine_vCUPhe::run() {
 	
-	printf("ScummEngine_vCUPhe::run(1)\n");
-	
 	initGraphics(CUP_Player::kDefaultVideoWidth, CUP_Player::kDefaultVideoHeight);
-	printf("ScummEngine_vCUPhe::run(2)\n");
 	if (_cupPlayer->open(_filenamePattern.pattern)) {
-		printf("ScummEngine_vCUPhe::run(3)\n");
 		_cupPlayer->play();
 		_cupPlayer->close();
 	}
@@ -1069,9 +1059,7 @@ ScummEngine_v8::~ScummEngine_v8() {
 
 Common::Error ScummEngine::init() {
 
-	printf("ScummEngine::init(1)\n");
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
-	printf("ScummEngine::init(2)\n");
 
 	// Add default file directories.
 	if (((_game.platform == Common::kPlatformAmiga) || (_game.platform == Common::kPlatformAtariST)) && (_game.version <= 4)) {
@@ -1139,7 +1127,6 @@ Common::Error ScummEngine::init() {
 			SearchMan.addSubDirectoryMatching(gameDataDir, "Contents/Resources/video");
 		}
 	}
-	printf("ScummEngine::init(4)\n");
 
 	// The	kGenUnchanged method is only used for 'container files', i.e. files
 	// that contain the real game files bundled together in an archive format.
@@ -1272,7 +1259,6 @@ Common::Error ScummEngine::init() {
 	// Load CJK font, if present
 	// Load it earlier so _useCJKMode variable could be set
 	loadCJKFont();
-	printf("ScummEngine::init(5)\n");
 	// Initialize backend
 	if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG) {
 		initGraphics(kHercWidth, kHercHeight);
@@ -1280,7 +1266,6 @@ Common::Error ScummEngine::init() {
 		int screenWidth = _screenWidth;
 		int screenHeight = _screenHeight;
 		
-		printf("ScummEngine::init - Screen (%d/%d)\n", screenWidth,screenHeight);
 		if (_useCJKMode) {
 			// CJK FT and DIG use usual NUT fonts, not FM-TOWNS ROM, so
 			// there is no text surface for them. This takes that into account
@@ -1288,7 +1273,6 @@ Common::Error ScummEngine::init() {
 			screenHeight *= _textSurfaceMultiplier;
 		}
 		
-		printf("ScummEngine::init(5-1)\n");
 		if (_game.features & GF_16BIT_COLOR
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 			|| _game.platform == Common::kPlatformFMTowns
@@ -1296,14 +1280,11 @@ Common::Error ScummEngine::init() {
 			) {
 #ifdef USE_RGB_COLOR
 			_outputPixelFormat = Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
-			printf("ScummEngine::init(5-2)\n");
 			if (_game.platform != Common::kPlatformFMTowns && _game.platform != Common::kPlatformPCEngine) {
 				initGraphics(screenWidth, screenHeight, &_outputPixelFormat);
-				printf("ScummEngine::init(5-3)\n");
 				if (_outputPixelFormat != _system->getScreenFormat())
 					return Common::kUnsupportedColorMode;
 			} else {
-				printf("ScummEngine::init(5-4)\n");
 				Common::List<Graphics::PixelFormat> tryModes = _system->getSupportedFormats();
 				for (Common::List<Graphics::PixelFormat>::iterator g = tryModes.begin(); g != tryModes.end(); ++g) {
 					if (g->bytesPerPixel != 2 || g->aBits()) {
@@ -1314,7 +1295,6 @@ Common::Error ScummEngine::init() {
 						break;
 					}
 				}
-				printf("ScummEngine::init(5-5)\n");
 				initGraphics(screenWidth, screenHeight, tryModes);
 				if (_system->getScreenFormat().bytesPerPixel != 2)
 					return Common::kUnsupportedColorMode;
@@ -1332,17 +1312,13 @@ Common::Error ScummEngine::init() {
 		if (_game.platform == Common::kPlatformFMTowns && _game.version == 5)
 			return Common::Error(Common::kUnsupportedColorMode, "This game requires dual graphics layer support which is disabled in this build");
 #endif
-			printf("ScummEngine::init(5-6)\n");
 			initGraphics(screenWidth, screenHeight);
 		}
 	}
 
 	_outputPixelFormat = _system->getScreenFormat();
-	printf("ScummEngine::init(6)\n");
 	setupScumm();
-	printf("ScummEngine::init(7)\n");
 	readIndexFile();
-	printf("ScummEngine::init(8)\n");
 	// Create the debugger now that _numVariables has been set
 	_debugger = new ScummDebugger(this);
 
@@ -1358,43 +1334,32 @@ Common::Error ScummEngine::init() {
 }
 
 void ScummEngine::setupScumm() {
-	printf("ScummEngine::setupScumm(1)\n");
-	
-	
 	// On some systems it's not safe to run CD audio games from the CD.
 	if (_game.features & GF_AUDIOTRACKS && !Common::File::exists("CDDA.SOU")) {
 		checkCD();
 		_system->getAudioCDManager()->open();
 	}
-	printf("ScummEngine::setupScumm(2)\n");
 
 	// Create the sound manager
 	if (_game.heversion > 0)
 		_sound = new SoundHE(this, _mixer);
 	else
 		_sound = new Sound(this, _mixer);
-	printf("ScummEngine::setupScumm(3)\n");
 
 	// Setup the music engine
 	setupMusic(_game.midi);
-	printf("ScummEngine::setupScumm(3b)\n");
 	// Load localization data, if present
 	loadLanguageBundle();
-	printf("ScummEngine::setupScumm(4)\n");
 
 	// Create the charset renderer
 	setupCharsetRenderer();
-	printf("ScummEngine::setupScumm(5)\n");
 
 	// Create and clear the text surface
 	_textSurface.create(_screenWidth * _textSurfaceMultiplier, _screenHeight * _textSurfaceMultiplier, Graphics::PixelFormat::createFormatCLUT8());
-	printf("ScummEngine::setupScumm(5a)\n");
 	clearTextSurface();
-	printf("ScummEngine::setupScumm(6)\n");
 
 	// Create the costume renderer
 	setupCostumeRenderer();
-	printf("ScummEngine::setupScumm(7)\n");
 
 	// Load game from specified slot, if any
 	if (ConfMan.hasKey("save_slot")) {
@@ -1405,18 +1370,14 @@ void ScummEngine::setupScumm() {
 		// selection dialog, since the original does not have any.
 		//LoomTownsDifficultyDialog difficultyDialog;
 		//runDialog(difficultyDialog);
-	printf("ScummEngine::setupScumm(8)\n");
-
 		int difficulty = 1;//difficultyDialog.getSelectedDifficulty();
 		if (difficulty != -1)
 			_bootParam = difficulty;
 	}
 
 	_res->allocResTypeData(rtBuffer, 0, 10, kDynamicResTypeMode);
-	printf("ScummEngine::setupScumm(9)\n");
 
 	setupScummVars();
-	printf("ScummEngine::setupScumm(10)\n");
 
 	setupOpcodes();
 
@@ -1439,7 +1400,6 @@ void ScummEngine::setupScumm() {
 		OF_OWNER_ROOM = 0xFF;
 	else
 		OF_OWNER_ROOM = 0x0F;
-	printf("ScummEngine::setupScumm(11)\n");
 
 	// if (_game.id==GID_MONKEY2 && _bootParam == 0)
 	//	_bootParam = 10001;
@@ -1464,14 +1424,11 @@ void ScummEngine::setupScumm() {
 	} else {
 		maxHeapThreshold = 550000;
 	}
-	printf("ScummEngine::setupScumm(12)\n");
 
 	_res->setHeapThreshold(400000, maxHeapThreshold);
 
 	free(_compositeBuf);
 	_compositeBuf = (byte *)malloc(_screenWidth * _textSurfaceMultiplier * _screenHeight * _textSurfaceMultiplier * _outputPixelFormat.bytesPerPixel);
-
-		printf("ScummEngine::setupScumm done.\n");
 
 }
 
@@ -1870,16 +1827,8 @@ void ScummEngine_v100he::resetScumm() {
 #endif
 
 void ScummEngine::setupMusic(int midi) {
-	printf("ScummEngine::setupMusic(1)\n");
-	_sound->_musicType = MDT_NONE;
-	return;
-
-/*
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(midi);
 	_native_mt32 = ((MidiDriver::getMusicType(dev) == MT_MT32) || ConfMan.getBool("native_mt32"));
-
-	printf("ScummEngine::setupMusic(2):%d\n",MidiDriver::getMusicType(dev));
-	printf("ScummEngine::setupMusic(3)\n");
 	switch (MidiDriver::getMusicType(dev)) {
 	case MT_NULL:
 		_sound->_musicType = MDT_NONE;
@@ -2097,7 +2046,7 @@ void ScummEngine::setupMusic(int midi) {
 				_imuse->property(IMuse::PROP_AMIGA, 1);
 		}
 	}
-	*/
+
 }
 
 void ScummEngine::syncSoundSettings() {
@@ -2161,8 +2110,6 @@ int ScummEngine::getTalkSpeed() {
 
 Common::Error ScummEngine::go() {
 	
-	printf("ScummEngine::go()...\n");
-	
 	setTotalPlayTime();
 
 	// If requested, load a save game instead of running the boot script
@@ -2174,15 +2121,8 @@ Common::Error ScummEngine::go() {
 	}
 
 	int diff = 0;	// Duration of one loop iteration
-
-	printf("ScummEngine::go(1): Going into loop...\n");
 	
 	while (!shouldQuit()) {
-
-		//printf("..\n");
-	
-		//printf("ScummEngine::go()-Loop(1)\n");
-	
 		_debugger->onFrame();
 
 		// Randomize the PRNG by calling it at regular intervals. This ensures
@@ -2765,14 +2705,12 @@ void ScummEngine::restart() {
 
 void ScummEngine::runBootscript() {
 	int args[NUM_SCRIPT_LOCAL];
-	printf("ScummEngine::runBootscript(1)\n");
 	memset(args, 0, sizeof(args));
 	args[0] = _bootParam;
 	if (_game.id == GID_MANIAC && (_game.features & GF_DEMO) && (_game.platform != Common::kPlatformC64))
 		runScript(9, 0, 0, args);
 	else
 		runScript(1, 0, 0, args);
-	printf("ScummEngine::runBootscript() done.\n");
 }
 
 #ifdef ENABLE_HE

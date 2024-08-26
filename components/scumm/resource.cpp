@@ -36,7 +36,7 @@
 #include "scumm/scumm.h"
 #include "scumm/scumm_v5.h"
 #include "scumm/scumm_v7.h"
-//#include "scumm/scumm_v8.h"
+#include "scumm/scumm_v8.h"
 #include "scumm/sound.h"
 #include "scumm/util.h"
 #include "scumm/verbs.h"
@@ -67,7 +67,6 @@ void ScummEngine::openRoom(const int room) {
 	bool result;
 	byte encByte = 0;
 
-	printf("ScummEngine::openRoom(1)\n");
 	debugC(DEBUG_GENERAL, "openRoom(%d)", room);
 	assert(room >= 0);
 
@@ -100,10 +99,8 @@ void ScummEngine::openRoom(const int room) {
 			_fileOffset = _res->_types[rtRoom][room]._roomoffs;
 			return;
 		}
-	printf("ScummEngine::openRoom(2)\n");
 
 		Common::String filename(generateFilename(room));
-	printf("ScummEngine::openRoom(3)\n");
 
 		// Determine the encryption, if any.
 		if (_game.features & GF_USE_KEY) {
@@ -115,9 +112,6 @@ void ScummEngine::openRoom(const int room) {
 				encByte = 0x69;
 		} else
 			encByte = 0;
-
-			printf("ScummEngine::openRoom(4)\n");
-
 		
 		if (room > 0 && (_game.version == 8))
 			VAR(VAR_CURRENTDISK) = diskNumber;
@@ -126,11 +120,6 @@ void ScummEngine::openRoom(const int room) {
 		
 		// Try to open the file
 		result = openResourceFile(filename, encByte);
-
-		printf("ScummEngine::openRoom(filename, result):%s, %d\n",filename.c_str(),result );
-		
-		printf("ScummEngine::openRoom(5)\n");
-
 		
 		if (result) {
 			if (room == 0)
@@ -206,9 +195,6 @@ bool ScummEngine::openFile(BaseScummFile &file, const Common::String &filename, 
 		result = file.openSubFile(filename);
 	}
 
-	printf("ScummEngine::openFile(1)\n");
-	printf("BaseScummFile: %p\n", &file);
-	
 	if (!result) {
 		file.close();
 		result = file.open(filename);
@@ -219,7 +205,7 @@ bool ScummEngine::openFile(BaseScummFile &file, const Common::String &filename, 
 
 bool ScummEngine::openResourceFile(const Common::String &filename, byte encByte) {
 	debugC(DEBUG_GENERAL, "openResourceFile(%s)", filename.c_str());
-
+// fcipaq
 	if (openFile(*_fileHandle, filename, true)) {
 		_fileHandle->setEnc(encByte);
 		return true;
@@ -249,6 +235,7 @@ void ScummEngine::askForDisk(const char *filename, int disknum) {
 #endif
 	} else {
 		sprintf(buf, "Cannot find file: '%s'", filename);
+		printf("Cannot find file: '%s'", filename);
 		//InfoDialog dialog(this, (char *)buf);
 		//runDialog(dialog);
 		error("Cannot find file: '%s'", filename);
@@ -259,15 +246,9 @@ void ScummEngine::readIndexFile() {
 	uint32 blocktype, itemsize;
 	int numblock = 0;
 
-	printf("ScummEngine::readIndexFile(1)\n");
-	
 	debugC(DEBUG_GENERAL, "readIndexFile()");
-
-	printf("ScummEngine::readIndexFile(1a)\n");
 	closeRoom();
-	printf("ScummEngine::readIndexFile(1b)\n");
 	openRoom(0);
-	printf("ScummEngine::readIndexFile(1c)\n");
 	
 	if (_game.version <= 5) {
 		// Figure out the sizes of various resources
@@ -306,15 +287,12 @@ void ScummEngine::readIndexFile() {
 		_fileHandle->seek(0, SEEK_SET);
 	}
 
-	printf("ScummEngine::readIndexFile(2)\n");
-	printf("ScummEngine::readIndexFile: %p\n",_fileHandle);
 	if (checkTryMedia(_fileHandle)) {
 		displayMessage(NULL, "You're trying to run game encrypted by ActiveMark. This is not supported.");
 		quitGame();
 
 		return;
 	}
-	printf("ScummEngine::readIndexFile(3)\n");
 
 	while (true) {
 		blocktype = _fileHandle->readUint32BE();
@@ -555,7 +533,6 @@ int ScummEngine_v70he::readResTypeList(ResType type) {
 
 void ResourceManager::allocResTypeData(ResType type, uint32 tag, int num, ResTypeMode mode) {
 	debug(2, "allocResTypeData(%s,%s,%d,%d)", nameOfResType(type), tag2str(TO_BE_32(tag)), num, mode);
-	printf("allocResTypeData(%s,%s,%d,%d)\n", nameOfResType(type), tag2str(TO_BE_32(tag)), num, mode);
 	assert(type >= 0 && type < (int)(ARRAYSIZE(_types)));
 
 	if (num >= 8000)
@@ -602,17 +579,11 @@ void ScummEngine::loadCharset(int no) {
 	assert(no < (int)sizeof(_charsetData) / 16);
 	assertRange(1, no, _numCharsets - 1, "charset");
 
-	printf("ScummEngine::loadCharset(1):%d\n",no );
-	
 	ptr = getResourceAddress(rtCharset, no);
-	printf("ScummEngine::loadCharset(2):%p\n",ptr);
-
 	
 	for (i = 0; i < 15; i++) {
 		_charsetData[no][i + 1] = ptr[i + 14];
 	}
-
-	printf("ScummEngine::loadCharset(2)\n");
 
 }
 
@@ -623,7 +594,6 @@ void ScummEngine::nukeCharset(int i) {
 
 void ScummEngine::ensureResourceLoaded(ResType type, ResId idx) {
 	debugC(DEBUG_RESOURCE, "ensureResourceLoaded(%s,%d)", nameOfResType(type), idx);
-	printf("ScummEngine::ensureResourceLoaded(%s,%d)\n", nameOfResType(type), idx);
 
 	if ((type == rtRoom) && idx > 0x7F && _game.version < 7 && _game.heversion <= 71) {
 		idx = _resourceMapper[idx & 0x7F];
@@ -658,7 +628,6 @@ int ScummEngine::loadResource(ResType type, ResId idx) {
 	uint32 size, tag;
 
 	debugC(DEBUG_RESOURCE, "loadResource(%s,%d)", nameOfResType(type), idx);
-	printf("ScummEngine::loadResource(%s,%d)\n", nameOfResType(type), idx);
 
 	if (type == rtCharset && (_game.features & GF_SMALL_HEADER)) {
 		loadCharset(idx);
@@ -668,7 +637,6 @@ int ScummEngine::loadResource(ResType type, ResId idx) {
 	roomNr = getResourceRoomNr(type, idx);
 
 	if (idx >= _res->_types[type].size()){
-		printf("ScummEngine::loadResource(2):%s %d undefined %d %d\n", nameOfResType(type), idx, _res->_types[type].size(), roomNr);
 		error("%s %d undefined %d %d", nameOfResType(type), idx, _res->_types[type].size(), roomNr);
 	}
 
@@ -677,12 +645,9 @@ int ScummEngine::loadResource(ResType type, ResId idx) {
 
 	fileOffs = getResourceRoomOffset(type, idx);
 	if (fileOffs == RES_INVALID_OFFSET){
-		printf("ScummEngine::loadResource (3):fileOffs == RES_INVALID_OFFSET\n");
 		return 0;
 	}
-	printf("ScummEngine::loadResource (4)\n");
 	openRoom(roomNr);
-	printf("ScummEngine::loadResource (5)\n");
 	_fileHandle->seek(fileOffs + _fileOffset, SEEK_SET);
 
 	if (_game.features & GF_OLD_BUNDLE) {
@@ -733,7 +698,6 @@ int ScummEngine::loadResource(ResType type, ResId idx) {
 	}
 
 	if (_fileHandle->err() || _fileHandle->eos()) {
-		printf("ScummEngine::loadResource (6):Cannot read resource\n");
 		error("Cannot read resource");
 		
 	}
@@ -774,25 +738,13 @@ byte *ScummEngine::getResourceAddress(ResType type, ResId idx) {
 		idx &= ~0x33539000;
 
 	if (!_res->validateResource("getResourceAddress", type, idx)){
-		printf("ScummEngine::getResourceAddress(1): Error validateResource\n");
 		return NULL;
 	}
 
 	if(type==rtCharset && idx==2){
-		printf("Request for Charset 2...\n");
-		printf("  kDynamicResTypeMode: %d\n", kDynamicResTypeMode);
-		printf("  this: %p\n", this);
-		printf("  _res: %p\n", _res);
-		printf("  _res->_types: %p\n", _res->_types);
-		printf("  &(_res->_types[type]): %p\n", &(_res->_types[type]));
-		printf("  &(_res->_types[type]._mode): %p\n", &(_res->_types[type]._mode));
-		printf("  _res->_types[type][idx]._address: %p\n", _res->_types[type][idx]._address);
-		printf("  _res->_types[type]._mode: %d\n", _res->_types[type]._mode);
-		
 		//if( _res->_types[type]._mode==0){
 			// _res->_types[type]._mode = (Scumm::ResTypeMode)1;
 		//}
-		
 	}
 	
 	
@@ -803,7 +755,6 @@ byte *ScummEngine::getResourceAddress(ResType type, ResId idx) {
 
 	ptr = (byte *)_res->_types[type][idx]._address;
 	if (!ptr) {
-		printf("ScummEngine::getResourceAddress(2): Error Resource missing\n");
 		debugC(DEBUG_RESOURCE, "getResourceAddress(%s,%d) == NULL", nameOfResType(type), idx);
 		return NULL;
 	}
@@ -965,7 +916,6 @@ void ResourceManager::nukeResource(ResType type, ResId idx) {
 	byte *ptr = _types[type][idx]._address;
 	if (ptr != NULL) {
 		debugC(DEBUG_RESOURCE, "nukeResource(%s,%d)", nameOfResType(type), idx);
-		printf("nukeResource(%s,%d)\n", nameOfResType(type), idx);
 		_allocatedSize -= _types[type][idx]._size;
 		_types[type][idx].nuke();
 	}
@@ -1149,8 +1099,6 @@ void ResourceManager::expireResources(uint32 size) {
 }
 
 void ResourceManager::freeResources() {
-	printf("ResourceManager::freeResources()\n");
-	
 	for (ResType type = rtFirst; type <= rtLast; type = ResType(type + 1)) {
 		ResId idx = _types[type].size();
 		while (idx-- > 0) {

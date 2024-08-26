@@ -77,11 +77,11 @@ public:
 	uint32 getTimerBaseValue() { return _timerBase; }
 	void setSingleInterrupt(uint sampleDelay) { assert(sampleDelay < _intFreq); _curInt = sampleDelay; }
 	void setSingleInterruptUnscaled(uint timerDelay) {
-		setSingleInterrupt((uint)(((double)timerDelay * getRate()) / _timerBase));
+		setSingleInterrupt((uint)(((float)timerDelay * getRate()) / _timerBase));
 	}
 	void setInterruptFreq(uint sampleDelay) { _intFreq = sampleDelay; _curInt = 0; }
 	void setInterruptFreqUnscaled(uint timerDelay) {
-		setInterruptFreq((uint)(((double)timerDelay * getRate()) / _timerBase));
+		setInterruptFreq((uint)(((float)timerDelay * getRate()) / _timerBase));
 	}
 	void clearVoice(byte voice);
 	void clearVoices() { for (int i = 0; i < NUM_VOICES; ++i) clearVoice(i); }
@@ -207,7 +207,7 @@ private:
 
 	const bool _stereo;
 	const int _rate;
-	const double _periodScale;
+	const float _periodScale;
 	uint _intFreq;
 	uint _curInt;
 	uint32 _timerBase;

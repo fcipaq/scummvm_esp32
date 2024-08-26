@@ -33,7 +33,6 @@
 #include "audio/mixer.h"
 #include "backends/graphics/graphics.h"
 #include "components/graphics/surface.h"
-//#include "backends/platform/3ds/sprite.h"
 #include "common/rect.h"
 #include "common/queue.h"
 #include "common/events.h"
@@ -47,6 +46,8 @@
 
 #define TICKS_PER_MSEC 268123
 
+#define NUM_BTNS (3)
+
 namespace _Esp32 {
 
 enum {
@@ -59,10 +60,45 @@ enum InputMode {
 	MODE_DRAG,
 };
 
+enum {
+    KEY_UP = 0,
+    KEY_RIGHT,
+    KEY_DOWN,
+    KEY_LEFT,
+    KEY_1,
+    KEY_2,
+    KEY_3,
+    KEY_MAX
+};
+
+struct esp_gamepad_state_t {
+    uint8_t value[KEY_MAX];
+};
+
 static const OSystem::GraphicsMode s_graphicsModes[] = {
 	{"default", "Default Test", GFX_LINEAR},
 	{ 0, 0, 0 }
 };
+
+// todo: move this out of here and implement the regular GUI
+/// Font data stored PER GLYPH
+typedef struct {
+	uint16_t bitmapOffset;     ///< Pointer into GFXfont->bitmap
+	uint8_t  width;            ///< Bitmap dimensions in pixels
+        uint8_t  height;           ///< Bitmap dimensions in pixels
+	uint8_t  xAdvance;         ///< Distance to advance cursor (x axis)
+	int8_t   xOffset;          ///< X dist from cursor pos to UL corner
+        int8_t   yOffset;          ///< Y dist from cursor pos to UL corner
+} GFXglyph_t;
+
+/// Data stored for FONT AS A WHOLE
+typedef struct { 
+	uint8_t  *bitmap;      ///< Glyph bitmaps, concatenated
+	GFXglyph_t *glyph;       ///< Glyph array
+	uint8_t   first;       ///< ASCII extents (first char)
+        uint8_t   last;        ///< ASCII extents (last char)
+	uint8_t   yAdvance;    ///< Newline distance (y axis)
+} GFXfont_t;
 
 class OSystem_Esp32 : public EventsBaseBackend, public PaletteManager {
 public:
@@ -70,14 +106,15 @@ public:
 	OSystem_Esp32();
 	virtual ~OSystem_Esp32();
 
-	void (*drawImageToScreen)(uint8_t*, uint16_t*, uint16_t, const uint16_t*, int16_t, int16_t);
-	void receiveKeyState(uint16_t lastKeystate);
-	
+	void display_send_buf_raw(void* buffer, int width, int height, uint16_t* palette);
+
 	volatile bool exiting;
 	volatile bool sleeping;
 
-	virtual void initBackend();
+        bool isInputInit();
 
+	virtual void initBackend();
+	
 	virtual bool hasFeature(OSystem::Feature f);
 	virtual void setFeatureState(OSystem::Feature f, bool enable);
 	virtual bool getFeatureState(OSystem::Feature f);
@@ -94,16 +131,22 @@ public:
 	virtual void deleteMutex(MutexRef mutex);
 
 	virtual void logMessage(LogMessageType::Type type, const char *message);
+        // audio
 	virtual Audio::Mixer *getMixer();
 	virtual PaletteManager *getPaletteManager() { return this; }
 	virtual Common::String getSystemLanguage() const;
-	/*
-	virtual void fatalError();
-	*/
+
+	//virtual void fatalError();
+
 	virtual void quit();
-/*
-	virtual Common::String getDefaultConfigFileName();
-*/
+
+	// HAL
+	esp_gamepad_state_t hw_input_read_raw();
+	void get_gamepad_state(esp_gamepad_state_t* out_state);
+	
+
+	//virtual Common::String getDefaultConfigFileName();
+
 	// Graphics
 	
 	int getDefaultGraphicsMode() const;
@@ -120,14 +163,7 @@ public:
 	}
 	void initSize(uint width, uint height,
 	              const Graphics::PixelFormat *format = NULL);
-	/*
-	virtual int getScreenChangeID() const { return 0; };
 
-	void beginGFXTransaction();
-	OSystem::TransactionError endGFXTransaction();
-	*/
-	int16 getHeight(){ return _gameHeight; }
-	int16 getWidth(){ return _gameWidth; }
 	void setPalette(const byte *colors, uint start, uint num);
 	void grabPalette(byte *colors, uint start, uint num) const override {}
 	void copyRectToScreen(const void *buf, int pitch, int x, int y, int w,
@@ -147,63 +183,58 @@ public:
 	                       int h);
 	virtual int16 getOverlayHeight();
 	virtual int16 getOverlayWidth();
-	/*
-	virtual void displayMessageOnOSD(const char *msg);
-*/
+	byte* getScreenBuffer();
+	int16 getHeight();
+	int16 getWidth();
+
 	bool showMouse(bool visible);
 	void warpMouse(int x, int y);
 	void setMouseCursor(const void *buf, uint w, uint h, int hotspotX,
 	                    int hotspotY, uint32 keycolor, bool dontScale = false,
 	                    const Graphics::PixelFormat *format = NULL);
-	/*
 	void setCursorPalette(const byte *colors, uint start, uint num);
 
+	// UIs
+	void draw_string(uint16_t x, uint16_t y, const char* text, uint16_t color);
+	
+	// Events
+	uint16_t getCursorPosX();
+	uint16_t getCursorPosY();
+	void setCursorPosX(uint16_t posx);
+	void setCursorPosY(uint16_t posy);
+	void report_keystate_to_engine();
+	
+	// HAL
+	
+	//void setCursorPalette(const byte *colors, uint start, uint num);
+
 	// Transform point from touchscreen coords into gamescreen coords
-	void transformPoint(touchPosition &point);
+	//void transformPoint(touchPosition &point);
 
-	void setCursorDelta(float deltaX, float deltaY);
+	//void setCursorDelta(float deltaX, float deltaY);
 
-	void updateFocus();*/
+	//void updateFocus();
 	void updateConfig();
-//	void updateSize();
+        //void updateSize();
 
 	void setSaveDir(char* dir);
-
-
-private:
-	void initGraphics();
-	void destroyGraphics();
-	void initAudio();
-	void destroyAudio();
-	void initEvents();
-	void destroyEvents();
-
-	void flushGameScreen();
-	void flushCursor();
-	 
 	
-	
-protected:
-	Audio::MixerImpl *_mixer;
-	//Audio::Mixer *_mixer;
 private:
+
+	uint16_t _screen_width, _screen_height;
+
 	uint16 _gameWidth, _gameHeight;
 
 	struct timeval _startTime;
 	
 	char* savedir;
-	
-	/*
 
+	// Input
+        volatile bool _isInputInit = false;
 
-	u16 _gameTopX, _gameTopY;
-	u16 _gameBottomX, _gameBottomY;
-*/
 	// Audio
 	bool hasAudio;
-/*	
-	Thread audioThread;
-*/
+
 	// Graphics
 	Graphics::PixelFormat _pfGame;
 	
@@ -211,9 +242,12 @@ private:
 	Graphics::PixelFormat _pfCursor;
 	byte _palette[3 * 256];
 	byte _cursorPalette[3 * 256];
+	byte *_mouseBuf = NULL;
 	byte *_gamePixels;
 	Graphics::Surface _surface;
-	bool _gameDirty = false; 
+	
+	// HW
+	int _brightness;
 	
 	/*
 	Sprite _gameTopTexture;
@@ -223,58 +257,48 @@ private:
 
 	int _screenShakeOffset;
 	bool _overlayVisible;
-	
-	/*
 
-	DVLB_s *_dvlb;
-	shaderProgram_s _program;
-	int _projectionLocation;
-	int _modelviewLocation;
-	C3D_Mtx _projectionTop;
-	C3D_Mtx _projectionBottom;
-	C3D_RenderTarget* _renderTargetTop;
-	C3D_RenderTarget* _renderTargetBottom;
-
-	// Focus
-	Common::Rect _focusRect;
-	bool _focusDirty;
-	C3D_Mtx _focusMatrix;
-	int _focusPosX, _focusPosY;
-	int _focusTargetPosX, _focusTargetPosY;
-	float _focusStepPosX, _focusStepPosY;
-	float _focusScaleX, _focusScaleY;
-	float _focusTargetScaleX, _focusTargetScaleY;
-	float _focusStepScaleX, _focusStepScaleY;
-	uint32 _focusClearTime;
-
-	// Events
-	Thread _eventThread;
-	Thread _timerThread;
-	*/
 	Common::Queue<Common::Event> _eventQueue;
 
 	// Cursor
 	uint _cursorWidth = 16,	_cursorHeight = 16;
 	int _cursorHotspotX = 8, _cursorHotspotY = 7;
-	int _cursorX = 100, _cursorY = 100;
+	int _cursorKeyColor = 0;
 	bool _cursorVisible = false;
+	bool _cursorPaletteEnabled = false;
+	
+private:
+	void initGraphics();
+	void destroyGraphics();
 
-	const uint16_t _cursorImage[16] = {
-		0x0080,0x0080,0x0080,0x0080,0x0080,0x0080,0x0000,0x7E3F,0x0000,0x0080,0x0080,0x0080,0x0080,0x0080,0x0080,0x0000
-	};
-	
-	/*
-	Graphics::Surface _cursor;
-	Sprite _cursorTexture;
-	bool _cursorPaletteEnabled;
-	bool _cursorVisible;
-	bool _cursorScalable;
-	float _cursorX, _cursorY;
-	float _cursorDeltaX, _cursorDeltaY;
-	int _cursorHotspotX, _cursorHotspotY;
-	uint32 _cursorKeyColor;
-	*/
-	
+	void initAudio(uint32_t audio_sample_rate);
+	void destroyAudio();
+
+	void initEvents();
+	void destroyEvents();
+	void pushEventQueue(Common::Queue<Common::Event> *queue, Common::Event &event);
+
+	bool initSDcard();
+	void destroySDcard();
+
+	bool initDisplay();
+	void destroyDisplay();
+	void display_flush();
+	void lcd_set_addr(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2);
+        void backlight_set(int value);
+	int  is_backlight_initialized();
+
+	void flushGameScreen();
+	void flushCursor();
+	void initInput();
+
+	void draw_text(uint16_t x, uint16_t y, const char* message, uint16_t count, uint16_t color);
+	void set_font(GFXfont_t* font);
+	void writePixel(int x1,int y1, uint16_t color);
+	void drawGlyph(int16_t x, int16_t y, GFXglyph_t *glyph, uint8_t  *bitmap, uint16_t color);
+	uint16_t FntLineHeight();
+	uint16_t FntLineWidth(const char* message, uint16_t count);
+
 };
 
 } // namespace _Esp32

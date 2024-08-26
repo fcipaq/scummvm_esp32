@@ -1422,8 +1422,8 @@ void TownsPC98_FmSynth::generateTables() {
 	delete[] _oprSinTbl;
 	_oprSinTbl = new uint32[1024];
 	for (int i = 0; i < 1024; i++) {
-		double val = sin((double)(((i << 1) + 1) * M_PI / 1024.0));
-		double d_dcb = log(1.0 / (double)ABS(val)) / log(2.0) * 256.0;
+		float val = sin((float)(((i << 1) + 1) * M_PI / 1024.0));
+		float d_dcb = log(1.0 / (float)ABS(val)) / log(2.0) * 256.0;
 		int32 i_dcb = (int32)(2.0 * d_dcb);
 		i_dcb = (i_dcb & 1) ? (i_dcb >> 1) + 1 : (i_dcb >> 1);
 		_oprSinTbl[i] = (i_dcb << 1) + (val >= 0.0 ? 0 : 1);
@@ -1432,7 +1432,7 @@ void TownsPC98_FmSynth::generateTables() {
 	delete[] _oprLevelOut;
 	_oprLevelOut = new int32[0x1a00];
 	for (int i = 0; i < 256; i++) {
-		double val = floor(65536.0 / pow(2.0, 0.00390625 * (double)(1 + i)));
+		float val = floor(65536.0 / pow(2.0, 0.00390625 * (float)(1 + i)));
 		int32 val_int = ((int32) val) >> 4;
 		_oprLevelOut[i << 1] = (val_int & 1) ? ((val_int >> 1) + 1) << 2 : (val_int >> 1) << 2;
 		_oprLevelOut[(i << 1) + 1] = -_oprLevelOut[i << 1];

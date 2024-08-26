@@ -93,7 +93,6 @@ public:
 		// static/dynamic plugin, like it's done for the engines
 		LINK_PLUGIN(AUTO)
 		LINK_PLUGIN(NULL)
-		/*
 		#if defined(WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
 		LINK_PLUGIN(WINDOWS)
 		#endif
@@ -135,14 +134,13 @@ public:
 		#ifndef DISABLE_SID
 		LINK_PLUGIN(C64)
 		#endif
-		LINK_PLUGIN(AMIGA)
-		LINK_PLUGIN(APPLEIIGS)
+//		LINK_PLUGIN(AMIGA)
+//		LINK_PLUGIN(APPLEIIGS)
+//		LINK_PLUGIN(PC98)
 		LINK_PLUGIN(TOWNS)
-		LINK_PLUGIN(PC98)
 		#if defined(USE_TIMIDITY)
 		LINK_PLUGIN(TIMIDITY)
 		#endif
-*/
 		return pl;
 	}
 };
@@ -487,14 +485,10 @@ PlainGameDescriptor EngineManager::findGame(const Common::String &gameName, cons
 	// First look for the game using the plugins in memory. This is critical
 	// for calls coming from inside games
 	
-	printf("EngineManager::findGame(1)\n");
-	
 	PlainGameDescriptor result = findGameInLoadedPlugins(gameName, plugin);
 	if (result.gameId) {
 		return result;
 	}
-
-	printf("EngineManager::findGame(2)\n");
 
 	// Now look for the game using the gameId. This is much faster than scanning plugin
 	// by plugin
@@ -504,15 +498,10 @@ PlainGameDescriptor EngineManager::findGame(const Common::String &gameName, cons
 			return result;
 		}
 	}
-
-	printf("EngineManager::findGame(3)\n");
-
 	
 	// We failed to find it using the gameid. Scan the list of plugins
 	PluginMan.loadFirstPlugin();
 	do {
-		printf("EngineManager::findGame(loop)\n");
-
 		result = findGameInLoadedPlugins(gameName, plugin);
 		if (result.gameId) {
 			// Update with new plugin file name

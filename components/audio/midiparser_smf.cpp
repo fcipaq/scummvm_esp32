@@ -141,7 +141,7 @@ void MidiParser_SMF::parseNextEvent(EventInfo &info) {
 			break;
 
 		default:
-			warning("MidiParser_SMF::parseNextEvent: Unsupported event code %x", info.event);
+			printf("MidiParser_SMF::parseNextEvent: Unsupported event code %x", info.event);
 		}
 	}
 }

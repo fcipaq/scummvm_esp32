@@ -44,10 +44,10 @@ private:
 	void seekToPos(uint pos);
 
 	byte _predictor;
-	double _samples[28];
+	float _samples[28];
 	byte _samplesRemaining;
 	int _rate;
-	double _s1, _s2;
+	float _s1, _s2;
 	uint _loopPoint;
 	bool _endOfData;
 };
@@ -68,7 +68,7 @@ XAStream::~XAStream() {
 		delete _stream;
 }
 
-static const double s_xaDataTable[5][2] = {
+static const float s_xaDataTable[5][2] = {
 	{  0.0, 0.0 },
 	{  60.0 / 64.0,  0.0 },
 	{  115.0 / 64.0, -52.0 / 64.0 },
@@ -118,11 +118,11 @@ int XAStream::readBuffer(int16 *buffer, const int numSamples) {
 			int16 s = (d & 0xf) << 12;
 			if (s & 0x8000)
 				s |= 0xffff0000;
-			_samples[i] = (double)(s >> shift);
+			_samples[i] = (float)(s >> shift);
 			s = (d & 0xf0) << 8;
 			if (s & 0x8000)
 				s |= 0xffff0000;
-			_samples[i + 1] = (double)(s >> shift);
+			_samples[i + 1] = (float)(s >> shift);
 		}
 
 		for (i = 0; i < 28 && samplesDecoded < numSamples; i++) {

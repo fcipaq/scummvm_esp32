@@ -552,9 +552,12 @@ void ConfigManager::set(const String &key, const String &value, const String &do
 
 	Domain *domain = getDomain(domName);
 
-	if (!domain)
+	if (!domain) {
+		printf("ConfigManager::set(%s,%s,%s) called on non-existent domain\n",
+		      key.c_str(), value.c_str(), domName.c_str());	   
 		error("ConfigManager::set(%s,%s,%s) called on non-existent domain",
 		      key.c_str(), value.c_str(), domName.c_str());
+	}
 
 	(*domain)[key] = value;
 

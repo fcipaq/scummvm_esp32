@@ -224,8 +224,6 @@ Common::Error AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine)
 	Common::Platform platform = Common::kPlatformUnknown;
 	Common::String extra;
 
-	printf("AdvancedMetaEngine::createInstance(1)\n");
-	
 	if (ConfMan.hasKey("language"))
 		language = Common::parseLanguage(ConfMan.get("language"));
 	if (ConfMan.hasKey("platform"))
@@ -234,9 +232,7 @@ Common::Error AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine)
 		if (ConfMan.hasKey("extra"))
 			extra = ConfMan.get("extra");
 	}
-	printf("AdvancedMetaEngine::createInstance(2)\n");
 	Common::String gameid = ConfMan.get("gameid");
-	printf("AdvancedMetaEngine::createInstance(3)\n");
 	Common::String path;
 	if (ConfMan.hasKey("path")) {
 		path = ConfMan.get("path");
@@ -250,20 +246,16 @@ Common::Error AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine)
 		warning("Game data path does not exist or is not a directory (%s)", path.c_str());
 		return Common::kNoGameDataFoundError;
 	}
-	printf("AdvancedMetaEngine::createInstance(4)\n");
 	if (files.empty())
 		return Common::kNoGameDataFoundError;
 
 	// Compose a hashmap of all files in fslist.
 	FileMap allFiles;
 	composeFileHashMap(allFiles, files, (_maxScanDepth == 0 ? 1 : _maxScanDepth));
-	printf("AdvancedMetaEngine::createInstance(4b)\n");
 	// Run the detector on this
 	ADDetectedGames matches = detectGame(files.begin()->getParent(), allFiles, language, platform, extra);
-	printf("AdvancedMetaEngine::createInstance(5)\n");
 	if (cleanupPirated(matches))
 		return Common::kNoGameDataFoundError;
-	printf("AdvancedMetaEngine::createInstance(6)\n");
 	ADDetectedGame agdDesc;
 	for (uint i = 0; i < matches.size(); i++) {
 		if ((_singleId || matches[i].desc->gameId == gameid) && !matches[i].hasUnknownFiles) {
@@ -271,7 +263,6 @@ Common::Error AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine)
 			break;
 		}
 	}
-	printf("AdvancedMetaEngine::createInstance(7)\n");
 	if (!agdDesc.desc) {
 		// Use fallback detector if there were no matches by other means
 		ADDetectedGame fallbackDetectedGame = fallbackDetect(allFiles, files);
@@ -283,7 +274,6 @@ Common::Error AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine)
 				agdDesc = ADDetectedGame();
 		}
 	}
-printf("AdvancedMetaEngine::createInstance(8)\n");
 	if (!agdDesc.desc)
 		return Common::kNoGameDataFoundError;
 
@@ -298,7 +288,6 @@ printf("AdvancedMetaEngine::createInstance(8)\n");
 	DetectedGame gameDescriptor = toDetectedGame(agdDesc);
 
 	bool showTestingWarning = false;
-printf("AdvancedMetaEngine::createInstance(9)\n");
 #ifdef RELEASE_BUILD
 	showTestingWarning = true;
 #endif
@@ -308,10 +297,8 @@ printf("AdvancedMetaEngine::createInstance(9)\n");
 					&& showTestingWarning)))
 			&& !Engine::warnUserAboutUnsupportedGame())
 		return Common::kUserCanceled;
-printf("AdvancedMetaEngine::createInstance(10)\n");
 	debug(2, "Running %s", gameDescriptor.description.c_str());
 	initSubSystems(agdDesc.desc);
-printf("AdvancedMetaEngine::createInstance(11)\n");
 	if (!createInstance(syst, engine, agdDesc.desc))
 		return Common::kNoGameDataFoundError;
 	else
@@ -396,8 +383,6 @@ ADDetectedGames AdvancedMetaEngine::detectGame(const Common::FSNode &parent, con
 	const ADGameDescription *g;
 	const byte *descPtr;
 
-	printf("AdvancedMetaEngine::detectGame(1)\n");
-	printf("Starting detection in dir '%s'\n", parent.getPath().c_str());
 	debug(3, "Starting detection in dir '%s'", parent.getPath().c_str());
 
 	// Check which files are included in some ADGameDescription *and* are present.
@@ -419,15 +404,12 @@ ADDetectedGames AdvancedMetaEngine::detectGame(const Common::FSNode &parent, con
 		}
 	}
 
-	printf("AdvancedMetaEngine::detectGame(2)\n");
 	int maxFilesMatched = 0;
 	bool gotAnyMatchesWithAllFiles = false;
 
 	// MD5 based matching
 	uint i;
 	for (i = 0, descPtr = _gameDescriptors; ((const ADGameDescription *)descPtr)->gameId != nullptr; descPtr += _descItemSize, ++i) {
-		
-		printf("AdvancedMetaEngine::detectGame(3):%d\n",i);
 		
 		g = (const ADGameDescription *)descPtr;
 
@@ -438,14 +420,12 @@ ADDetectedGames AdvancedMetaEngine::detectGame(const Common::FSNode &parent, con
 			(platform != Common::kPlatformUnknown && g->platform != Common::kPlatformUnknown && g->platform != platform)) {
 			continue;
 		}
-		printf("AdvancedMetaEngine::detectGame(4)\n");
 		if ((_flags & kADFlagUseExtraAsHint) && !extra.empty() && g->extra != extra)
 			continue;
 
 		ADDetectedGame game(g);
 		bool allFilesPresent = true;
 		int curFilesMatched = 0;
-		printf("AdvancedMetaEngine::detectGame(5)\n");
 		// Try to match all files for this game
 		for (fileDesc = game.desc->filesDescriptions; fileDesc->fileName; fileDesc++) {
 			Common::String tstr = fileDesc->fileName;
@@ -475,7 +455,6 @@ ADDetectedGames AdvancedMetaEngine::detectGame(const Common::FSNode &parent, con
 			debug(3, "Matched file: %s", tstr.c_str());
 			curFilesMatched++;
 		}
-		printf("AdvancedMetaEngine::detectGame(6)\n");
 		// We found at least one entry with all required files present.
 		// That means that we got new variant of the game.
 		//
@@ -489,7 +468,6 @@ ADDetectedGames AdvancedMetaEngine::detectGame(const Common::FSNode &parent, con
 			if (matched.empty() || strcmp(matched.back().desc->gameId, g->gameId) != 0)
 				matched.push_back(game);
 		}
-		printf("AdvancedMetaEngine::detectGame(7)\n");
 		if (allFilesPresent && !game.hasUnknownFiles) {
 			debug(2, "Found game: %s (%s %s/%s) (%d)", g->gameId, g->extra,
 			 getPlatformDescription(g->platform), getLanguageDescription(g->language), i);
@@ -511,7 +489,6 @@ ADDetectedGames AdvancedMetaEngine::detectGame(const Common::FSNode &parent, con
 			debug(5, "Skipping game: %s (%s %s/%s) (%d)", g->gameId, g->extra,
 			 getPlatformDescription(g->platform), getLanguageDescription(g->language), i);
 		}
-		printf("AdvancedMetaEngine::detectGame(8)\n");
 	}
 
 	return matched;

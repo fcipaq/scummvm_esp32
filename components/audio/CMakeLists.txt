@@ -1,0 +1,7 @@
+idf_component_register(SRCS ./adlib.cpp ./audiostream.cpp ./fmopl.cpp ./mididrv.cpp ./midiparser.cpp ./midiparser_qt.cpp ./midiparser_smf.cpp ./midiparser_xmidi.cpp ./midiplayer.cpp ./miles_mt32.cpp ./mixer.cpp ./mpu401.cpp ./musicplugin.cpp ./null.cpp ./rate.cpp ./timestamp.cpp ./decoders/mac_snd.cpp ./decoders/voc.cpp ./decoders/mp3.cpp ./decoders/adpcm.cpp ./decoders/iff_sound.cpp ./decoders/quicktime.cpp ./decoders/qdm2.cpp ./decoders/wave.cpp ./decoders/raw.cpp ./decoders/3do.cpp ./decoders/vorbis.cpp ./decoders/flac.cpp ./decoders/aac.cpp ./decoders/xa.cpp ./decoders/aiff.cpp mods/infogrames.cpp mods/maxtrax.cpp mods/module.cpp mods/module_mod_xm_s3m.cpp mods/mod_xm_s3m.cpp mods/paula.cpp mods/protracker.cpp mods/rjp1.cpp mods/soundfx.cpp mods/tfmx.cpp softsynth/appleiigs.cpp softsynth/cms.cpp softsynth/eas.cpp softsynth/fluidsynth.cpp softsynth/mt32.cpp softsynth/pcspk.cpp softsynth/sid.cpp softsynth/wave6581.cpp softsynth/fmtowns_pc98/pc98_audio.cpp softsynth/fmtowns_pc98/towns_audio.cpp softsynth/fmtowns_pc98/towns_euphony.cpp softsynth/fmtowns_pc98/towns_pc98_driver.cpp softsynth/fmtowns_pc98/towns_pc98_fmsynth.cpp softsynth/fmtowns_pc98/towns_pc98_plugins.cpp softsynth/opl/mame.cpp softsynth/opl/dosbox.cpp softsynth/opl/dbopl.cpp softsynth/opl/nuked.cpp
+                       INCLUDE_DIRS ./..
+                       REQUIRES
+                       PRIV_REQUIRES )
+
+set (CMAKE_CXX_FLAGS "-Wno-reorder -Wno-class-memaccess -Wno-format -Wno-missing-field-initializers -mlongcalls")
+set (CMAKE_C_FLAGS "-mlongcalls")

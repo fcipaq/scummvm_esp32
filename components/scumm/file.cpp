@@ -53,9 +53,6 @@ void ScummFile::resetSubfile() {
 }
 
 bool ScummFile::open(const Common::String &filename) {
-	
-	printf("ScummFile::open(1)\n");
-	
 	if (File::open(filename)) {
 		resetSubfile();
 		return true;
@@ -192,7 +189,6 @@ uint32 ScummFile::read(void *dataPtr, uint32 dataSize) {
 //pragma mark -
 
 bool ScummSteamFile::open(const Common::String &filename) {
-	printf("ScummSteamFile::open\n");
 	if (filename.equalsIgnoreCase(_indexFile.indexFileName)) {
 		return openWithSubRange(_indexFile.executableName, _indexFile.start, _indexFile.len);
 	} else {
@@ -329,9 +325,6 @@ bool ScummDiskImage::openDisk(char num) {
 }
 
 bool ScummDiskImage::open(const Common::String &filename) {
-
-	printf("ScummDiskImage::open(1)\n");
-
 	uint16 signature;
 
 	// check signature

@@ -38,22 +38,22 @@ namespace OPL {
 namespace DOSBox {
 
 struct Timer {
-	double startTime;
-	double delay;
+	float startTime;
+	float delay;
 	bool enabled, overflow, masked;
 	uint8 counter;
 
 	Timer();
 
 	//Call update before making any further changes
-	void update(double time);
+	void update(float time);
 
 	//On a reset make sure the start is in sync with the next cycle
-	void reset(double time);
+	void reset(float time);
 
 	void stop();
 
-	void start(double time, int scale);
+	void start(float time, int scale);
 };
 
 struct Chip {

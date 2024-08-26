@@ -30,7 +30,8 @@ typedef long int64;
 #define SCUMM_NEED_ALIGNMENT
 //#define NORETURN_PRE void
 //#define error(a...) printf(a); exit(1);
-#define warning(a...) printf(a)
+//#define warning(a...) printf(a)
+#define warning(a...) assert(true)
 //#define usage(a...) printf(a)
 #define FORCEINLINE inline
 #define STATIC_ASSERT(a,b) assert(a)

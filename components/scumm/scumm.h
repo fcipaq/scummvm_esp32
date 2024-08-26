@@ -422,12 +422,10 @@ public:
 	Common::Error init();
 	Common::Error go();
 	virtual Common::Error run() {
-		printf("virtual Common::Error run(1) in scumm.h\n");
 		Common::Error err;
 		err = init();
 		if (err.getCode() != Common::kNoError)
 			return err;
-		printf("Engine Init done, calling go()...\n");
 		return go();
 	}
 	virtual void errorString(const char *buf_input, char *buf_output, int buf_output_size);

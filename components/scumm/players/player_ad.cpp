@@ -25,7 +25,8 @@
 #include "scumm/scumm.h"
 #include "scumm/resource.h"
 
-//#include "audio/fmopl.h"
+#include "audio/fmopl.h"
+#include "audio/softsynth/opl/mame.h"
 #include "audio/mixer.h"
 
 #include "common/textconsole.h"
@@ -37,10 +38,10 @@ namespace Scumm {
 
 Player_AD::Player_AD(ScummEngine *scumm)
 	: _vm(scumm) {
-	/*_opl2 = OPL::Config::create();
+	_opl2 = OPL::Config::create();
 	if (!_opl2->init()) {
 		error("Could not initialize OPL2 emulator");
-	}*/
+	}
 
 	memset(_registerBackUpTable, 0, sizeof(_registerBackUpTable));
 	writeReg(0x01, 0x00);
@@ -72,14 +73,14 @@ Player_AD::Player_AD(ScummEngine *scumm)
 	_musicVolume = _sfxVolume = 255;
 	_isSeeking = false;
 
-	//_opl2->start(new Common::Functor0Mem<void, Player_AD>(this, &Player_AD::onTimer), AD_CALLBACK_FREQUENCY);
+	_opl2->start(new Common::Functor0Mem<void, Player_AD>(this, &Player_AD::onTimer), AD_CALLBACK_FREQUENCY);
 }
 
 Player_AD::~Player_AD() {
 	stopAllSounds();
 	Common::StackLock lock(_mutex);
-	//delete _opl2;
-	//_opl2 = 0;
+	delete _opl2;
+	_opl2 = 0;
 }
 
 void Player_AD::setMusicVolume(int vol) {
@@ -392,7 +393,7 @@ void Player_AD::writeReg(int r, int v) {
 		}
 	}
 
-	//_opl2->writeReg(r, v);
+	_opl2->writeReg(r, v);
 }
 
 uint8 Player_AD::readReg(int r) const {
@@ -1194,3 +1195,4 @@ const uint Player_AD::_registerShiftTable[7] = {
 };
 
 } // End of namespace Scumm
+

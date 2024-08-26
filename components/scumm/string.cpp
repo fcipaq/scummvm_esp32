@@ -37,7 +37,7 @@
 #include "scumm/scumm.h"
 #include "scumm/scumm_v6.h"
 #include "scumm/scumm_v7.h"
-//#include "scumm/scumm_v8.h"
+#include "scumm/scumm_v8.h"
 #include "scumm/verbs.h"
 #include "scumm/he/sound_he.h"
 
@@ -114,7 +114,6 @@ void ScummEngine::showMessageDialog(const byte *msg) {
 	if (_string[3].color == 0)
 		_string[3].color = 4;
 
-	printf("MessageDialog: %s\n",(char *)buf);
 	//InfoDialog dialog(this, (char *)buf);
 	//VAR(VAR_KEYPRESS) = runDialog(dialog);
 }

@@ -35,15 +35,15 @@ class MT32EMU_EXPORT SampleRateConverter {
 public:
 	// Returns the value of AnalogOutputMode for which the output signal may retain its full frequency spectrum
 	// at the sample rate specified by the targetSampleRate argument.
-	static AnalogOutputMode getBestAnalogOutputMode(double targetSampleRate);
+	static AnalogOutputMode getBestAnalogOutputMode(float targetSampleRate);
 
 	// Returns the sample rate supported by the sample rate conversion implementation currently in effect
 	// that is closest to the one specified by the desiredSampleRate argument.
-	static double getSupportedOutputSampleRate(double desiredSampleRate);
+	static float getSupportedOutputSampleRate(float desiredSampleRate);
 
 	// Creates a SampleRateConverter instance that converts output signal from the synth to the given sample rate
 	// with the specified conversion quality.
-	SampleRateConverter(Synth &synth, double targetSampleRate, SamplerateConversionQuality quality);
+	SampleRateConverter(Synth &synth, float targetSampleRate, SamplerateConversionQuality quality);
 	~SampleRateConverter();
 
 	// Fills the provided output buffer with the results of the sample rate conversion.
@@ -57,15 +57,15 @@ public:
 	// Returns the number of samples produced at the internal synth sample rate (32000 Hz)
 	// that correspond to the number of samples at the target sample rate.
 	// Intended to facilitate audio time synchronisation.
-	double convertOutputToSynthTimestamp(double outputTimestamp) const;
+	float convertOutputToSynthTimestamp(float outputTimestamp) const;
 
 	// Returns the number of samples produced at the target sample rate
 	// that correspond to the number of samples at the internal synth sample rate (32000 Hz).
 	// Intended to facilitate audio time synchronisation.
-	double convertSynthToOutputTimestamp(double synthTimestamp) const;
+	float convertSynthToOutputTimestamp(float synthTimestamp) const;
 
 private:
-	const double synthInternalToTargetSampleRateRatio;
+	const float synthInternalToTargetSampleRateRatio;
 	const bool useSynthDelegate;
 	void * const srcDelegate;
 }; // class SampleRateConverter
