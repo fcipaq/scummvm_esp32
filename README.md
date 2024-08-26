@@ -11,12 +11,19 @@ Animated cursors work as well. Saving is possible but there is no interface (see
 For hardware related configs please look at components/backends/platform/esp32:
 
   osystem-audio.cpp   --> set PIN_SND to fit your setup
+  
   osystem-display.cpp --> pin assignment for the LCD interface and the gfx setup for LovyanGFX
+  
   osystem-events.cpp  --> key combo for gamestate saving/loading (i.e. the UI)
+  
   osystem-input.cpp   --> pin assignment for the buttons
+  
   osystem-sdcard.cpp  --> pin assignment for SD card
 
+
 I built it using ESP-IDF v5.2.1
+
+idf.py -p YOURPORT build flash
 
 Enjoy!
 
